@@ -11,8 +11,7 @@ def getAccountBalance(token, account_no):
     response = requests.get(url)
     json_data = json.loads(response.text)
     print json_data[1].get('balance')
-    return json_data
+    return json_data[1].get('balance')
 
-    
+
 #getAccountBalance(token,account_no)
-    
