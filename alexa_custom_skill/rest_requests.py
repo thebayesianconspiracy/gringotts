@@ -138,7 +138,7 @@ cardType = creditCardTypes[0]
 cardNo = "1234567898765432"
 expDate = "10-19"
 cvvNo = "081"
-
+    
 def testAll():
     status, json = getAccountBalance(token, account_no)
     print status
@@ -173,3 +173,4 @@ def testAll():
     status, json = getCreditCardDetails(token, cardNo)
     print status
 
+#testAll()
