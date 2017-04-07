@@ -11,7 +11,7 @@ app = Flask(__name__)
 ask = Ask(app, "/")
 logging.getLogger('flask_ask').setLevel(logging.DEBUG)
 
-token = "bd8a9799dc54"
+token = "f4773fe50e94"
 account_no = "4444777755551369"
 
 @ask.launch
@@ -22,20 +22,43 @@ def launch():
 
 @ask.intent('BalanceIntent')
 def getAccountBalance():
-    balance = rest.getAccountBalance(token, account_no)
-    print balance
-    speech_text = "Your balance is " + str(balance) + " rupees"
+    response = rest.getAccountBalance(token, account_no)
+    if response[0] == 200:
+        balanceResponse = response[1]
+        balanceValue = balanceResponse[1].get('balance')
+        speech_text = "Your balance is " + balanceValue + " rupees"
+    else:
+        speech_text = "There was an error processing your request"
     return statement(speech_text).simple_card('GringottsResponse', speech_text)
 
 @ask.intent('RecentTransactionsIntent',
-    mapping={'recentDays': 'RECENT_DAYS'})
-def getRecentTransactions(recentDays):
+    mapping={'recentDays': 'RECENT_DAYS', 'fromDay':'FROM_DAY', 'toDay' : 'TO_DAY'})
+def getRecentTransactions(recentDays, fromDay, toDay):
     if recentDays is not None:
+        print "recentDays " + recentDays
         speech_text = 'Your transactions in the last ' + str(recentDays) + ' days are'
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    elif fromDay is not None:
+        print "fromDay " + fromDay
+        speech_text = 'Your transactions in the last ' + str(fromDay) + ' days are'
+    elif toDay is not None:
+        print "toDay " + toDay
+        speech_text = 'Your transactions in the last ' + str(toDay) + ' days are'
     else :
-        speech_text = 'How many days?'
+        speech_text = 'Please specify a duration'
         return question(speech_text).simple_card('GringottsResponse', speech_text)
+    return statement("Error").simple_card('GringottsResponse', speech_text)
+
+@ask.intent('MoneySpentIntent',
+    mapping={'recentDays': 'RECENT_DAYS'})
+def getMoneySpent(recentDays, fromDay, toDay):
+    if recentDays is not None:
+        print "recentDays " + recentDays
+        speech_text = 'You have spent lot of money in the last ' + str(recentDays) + ' days'
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    else :
+        speech_text = 'Please specify a duration'
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
     return statement("Error").simple_card('GringottsResponse', speech_text)
 
 @ask.session_ended
