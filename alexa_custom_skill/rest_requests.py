@@ -1,134 +1,176 @@
 import json
 import requests
 
+timeOut= 2.0
 client_id = "soumyadeep9@gmail.com"
-retail_base_url = "aHR0cHM6Ly9yZXRhaWxiYW5raW5nLm15Ymx1ZW1peC5uZXQvYmFua2luZy9pY2ljaWJhbmsvCg=="
-debitcard_base_url = "aHR0cHM6Ly9kZWJpdGNhcmRhcGkubXlibHVlbWl4Lm5ldC9kZWJpdC9pY2ljaWJhbmsvCg=="
-biller_base_url = "aHR0cHM6Ly9iaWxsZXIubXlibHVlbWl4Lm5ldC9iaWxsZXIvaWNpY2liYW5rLwo="
-upi_base_url = "aHR0cHM6Ly91cGlzZXJ2aWNlLm15Ymx1ZW1peC5uZXQvYmFua2luZy9pY2ljaWJhbmsvCg=="
-creditcard_base_url = "aHR0cHM6Ly9jcmVkaXRjYXJkYXBpLm15Ymx1ZW1peC5uZXQvYmFua2luZy9pY2ljaWJhbmsvCg=="
+
+retail_base_url = "https://retailbanking.mybluemix.net/banking/icicibank/"
+debitcard_base_url = "https://debitcardapi.mybluemix.net/debit/icicibank/"
+biller_base_url = "https://biller.mybluemix.net/biller/icicibank/"
+upi_base_url = "https://upiservice.mybluemix.net/banking/icicibank/"
+creditcard_base_url = "https://creditcardapi.mybluemix.net/banking/icicibank/"
+pockets_base_url = "https://pocketsapi.mybluemix.net/rest/Card/"
+
+billers = ["Electricity", "LPG", "Mobile", "Internet"]
+creditCardTypes = ["MASTERCARD", "VISA", "PLATINUM", "SIGNATURE" ]
+
+ERROR_TIMEOUT = -2
+ERROR_LIST  = -1
+
+def callGet(url, payload):
+    try: 
+        response = requests.get(url, params=payload,  timeout=timeOut)
+    except:
+        return ERROR_TIMEOUT, {}
+    json_data = response.json()
+    return response.status_code, json_data
 
 def getAccountBalance(token, account_no):
     payload = {'client_id': client_id, 'token': token, 'accountno': account_no}
     url = retail_base_url + "balanceenquiry"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    return callGet(url, payload)
         
-def getAccountSummary(token, cusid, account_no):
+def getAccountSummary(token, custid, account_no):
     payload = {'client_id': client_id, 'token': token, 'accountno': account_no, 'custid': custid }
     url = retail_base_url + "account_summary"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
- 
+    return callGet(url, payload)
+
 def getMiniStatement(token, account_no):
     payload = {'client_id': client_id, 'token': token, 'accountno': account_no}
     url = retail_base_url + "recenttransaction"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    return callGet(url, payload)
  
 def getnDaysTransaction(token, account_no, days):
     payload = {'client_id': client_id, 'token': token, 'accountno': account_no, 'days': days }
     url = retail_base_url + "ndaystransaction"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    return callGet(url, payload)
      
 def getTransactionsInterval(token, accountno, fromdate, todate):
     payload = {'client_id': client_id, 'token': token, 'accountno': account_no, 'fromdate': fromdate, 'todate': todate }
     url = retail_base_url + "transactioninterval"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    return callGet(url, payload)
 
 def listPayee(token, custid):
     payload = {'client_id': client_id, 'token': token, 'custid': custid }
     url = retail_base_url + "listpayee"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    return callGet(url, payload)
 
-def fundTransfer(token, srcAccount, destAccount, amount, payeeDesc, payeeId, type_of_transaction):
-    payload = {'client_id': client_id, 'token': token, 'srcAccount': srcAccount, 'destAccount': destAccount, 'amt': amount, 'payeeDesc': payeeDesc, 'payeeId': payeeId, 'type_of_ransaction': type_of_transaction  }
+def fundTransfer(token, srcAccount, destAccount, amount):
+    payload = {'client_id': client_id, 'token': token, 'srcAccount': srcAccount, 'destAccount': destAccount, 'amt': amount }
     url = retail_base_url + "fundTransfer"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    return callGet(url, payload)
 
 def authDebitCardDetails(token, custid, debit_card_no, cvv, expiry_date):
     payload = {'client_id': client_id, 'token': token, 'custid': custid, 'debit_card_no': debit_card_no, 'cvv' : cvv, 'expiry_date': expiry_date }
     url = debitcard_base_url + "authDebitDetails"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    return callGet(url, payload)
 
 def getBillerDetails(token, billername):
     payload = {'client_id': client_id, 'token': token, 'billername': billername }
-    url = base_url + "billerdetail"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    url = biller_base_url + "billerdetail"
+    return callGet(url, payload)
 
 def addBiller(token, billerdetail, state, custid, nickname, consumerno):
     payload = {'client_id': client_id, 'token': token, 'billerdetail': billerdetail, 'state': state, 'custid': custid, 'nickname': nickname, 'consumerno': consumerno }
     url = biller_base_url + "addbiller"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    return callGet(url, payload)
 
 def payBill(token, custid, nickname, amount):
-    payload = {'client_id': client_id, 'token': token, 'nickname': nickname, 'amount': amount }
+    payload = {'client_id': client_id, 'token': token, 'nickname': nickname, 'amount': amount, 'custid': custid }
     url = biller_base_url + "billpay"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    return callGet(url, payload)
 
 def createVPA(token, accountNo, vpa):
     payload = {'client_id': client_id, 'token': token, 'accountNo': accountNo, 'vpa': vpa }
     url = upi_base_url + "createVPA"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    return callGet(url, payload)
 
 def upiFundTransferVtoV(token, payerCustId, payerVPA, payeeVPA, amount, remarks):
     payload = {'client_id': client_id, 'token': token, 'payerCustId': payerCustId, 'payerVPA': payerVPA, 'payeeVPA': payeeVPA, 'amount': amount, 'remarks': remarks }
-    url = upi_base_url + "upiFundTransferVtoV"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    url = upi_base_url + "upiFundTransferVToV"
+    return callGet(url, payload)
 
 def upiFundTransferVtoA(token, payerCustId, payerVPA, payeeAccount, amount, remarks):
     payload = {'client_id': client_id, 'token': token, 'payerCustId': payerCustId, 'payerVPA': payerVPA, 'payeeAccount': payeeAccount, 'amount': amount, 'remarks': remarks }
-    url = upi_base_url + "upiFundTransferVtoV"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    url = upi_base_url + "upiFundTransferVToA"
+    return callGet(url, payload)
 
 def addCreditCard(token, custId, cardType, cardNo, expDate, cvvNo):
+    if cardType not in creditCardTypes:
+        return ERROR_LIST, {}
     payload = {'client_id': client_id, 'token': token, 'custId': custId, 'cardType': cardType, 'cardNo': cardNo, 'expDate': expDate, 'cvvNo': cvvNo }
     url = creditcard_base_url + "addCreditCard"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    return callGet(url, payload)
 
 def getCreditCardDetails(token, cardNumber):
     payload = {'client_id': client_id, 'authToken': token, 'cardNumber': cardNumber }
-    url = creditcard_base_url + "getCardDetails"
-    response = requests.get(url, params=payload,  timeout=0.001)
-    json_data = response.json()
-    return response.status_code, json_data
+    url = pockets_base_url + "getCardDetails"
+    return callGet(url, payload)
 
-token = "##"		
+token = "f4773fe50e94"
 account_no = "4444777755551369"
+custid = "33336369"
+days = 2
+fromdate = "2017-03-01"
+todate = "2017-03-10"
+
+srcAccount = account_no
+destAccount = "4444777755551370"
+amount = "1000"
+debit_card_no = "3477551166996369"
+cvv = "871"
+expiry_date = "10-19"
+
+billername = billers[0]
+billerdetail = "TataPower"
+state = "gujarat"
+nickname = "ece"
+consumerno = "90345672"
+vpa = "soumyadeep@icici"
+
+payerCustId = custid
+payerVPA = vpa
+payeeVPA = "aditya@icici"
+remarks = "splitwise"
+payeeAccount = destAccount
+
+cardType = creditCardTypes[0]
+cardNo = "1234567898765432"
+expDate = "10-19"
+cvvNo = "081"
     
 def testAll():
     status, json = getAccountBalance(token, account_no)
     print status
-    status, json = getAccountSummary(token, cusid, account_no)
+    status, json = getAccountSummary(token, custid, account_no)
     print status
     status, json = getMiniStatement(token, account_no)
     print status
     status, json = getnDaysTransaction(token, account_no, days)
-    print status       
+    print status
+    status, json = getTransactionsInterval(token, account_no, fromdate, todate)
+    print status
+    status, json = listPayee(token, custid)
+    print status
+    status, json = fundTransfer(token, srcAccount, destAccount, amount)
+    print status
+    status, json = authDebitCardDetails(token, custid, debit_card_no, cvv, expiry_date)
+    print status
+    status, json = getBillerDetails(token, billername)
+    print status
+    status, json = addBiller(token, billerdetail, state, custid, nickname, consumerno)
+    print status
+    status, json = payBill(token, custid, nickname, amount)
+    print status
+    status, json = createVPA(token, account_no, vpa)
+    print status
+    status, json = upiFundTransferVtoV(token, payerCustId, payerVPA, payeeVPA, amount, remarks)
+    print status
+    status, json = upiFundTransferVtoA(token, payerCustId, payerVPA, payeeAccount, amount, remarks)
+    print status
+    status, json = addCreditCard(token, custid, cardType, cardNo, expDate, cvvNo)
+    print status
+    status, json = getCreditCardDetails(token, cardNo)
+    print status
+
+#testAll()
