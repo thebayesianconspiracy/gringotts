@@ -120,9 +120,9 @@ def getCreditCardDetails(token, cardNumber):
     json_data = response.json()
     return response.status_code, json_data
 
-token = "##"
+token = "##"		
 account_no = "4444777755551369"
-
+    
 def testAll():
     status, json = getAccountBalance(token, account_no)
     print status
@@ -131,5 +131,4 @@ def testAll():
     status, json = getMiniStatement(token, account_no)
     print status
     status, json = getnDaysTransaction(token, account_no, days)
-    print status
-       
+    print status       
