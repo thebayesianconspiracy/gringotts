@@ -2,11 +2,11 @@ import json
 import requests
 
 client_id = "soumyadeep9@gmail.com"
-retail_base_url = "https://retailbanking.mybluemix.net/banking/icicibank/"
-debitcard_base_url = "https://debitcardapi.mybluemix.net/debit/icicibank/"
-biller_base_url = "https://biller.mybluemix.net/biller/icicibank/"
-upi_base_url = "https://upiservice.mybluemix.net/banking/icicibank/"
-creditcard_base_url = "https://creditcardapi.mybluemix.net/banking/icicibank/"
+retail_base_url = "aHR0cHM6Ly9yZXRhaWxiYW5raW5nLm15Ymx1ZW1peC5uZXQvYmFua2luZy9pY2ljaWJhbmsvCg=="
+debitcard_base_url = "aHR0cHM6Ly9kZWJpdGNhcmRhcGkubXlibHVlbWl4Lm5ldC9kZWJpdC9pY2ljaWJhbmsvCg=="
+biller_base_url = "aHR0cHM6Ly9iaWxsZXIubXlibHVlbWl4Lm5ldC9iaWxsZXIvaWNpY2liYW5rLwo="
+upi_base_url = "aHR0cHM6Ly91cGlzZXJ2aWNlLm15Ymx1ZW1peC5uZXQvYmFua2luZy9pY2ljaWJhbmsvCg=="
+creditcard_base_url = "aHR0cHM6Ly9jcmVkaXRjYXJkYXBpLm15Ymx1ZW1peC5uZXQvYmFua2luZy9pY2ljaWJhbmsvCg=="
 
 def getAccountBalance(token, account_no):
     payload = {'client_id': client_id, 'token': token, 'accountno': account_no}
@@ -120,7 +120,7 @@ def getCreditCardDetails(token, cardNumber):
     json_data = response.json()
     return response.status_code, json_data
 
-token = "bd8a9799dc54"
+token = "##"
 account_no = "4444777755551369"
 
 def testAll():
