@@ -4,6 +4,13 @@ import requests
 timeOut= 2.0
 client_id = "soumyadeep9@gmail.com"
 
+retail_base_url = "https://retailbanking.mybluemix.net/banking/icicibank/"
+debitcard_base_url = "https://debitcardapi.mybluemix.net/debit/icicibank/"
+biller_base_url = "https://biller.mybluemix.net/biller/icicibank/"
+upi_base_url = "https://upiservice.mybluemix.net/banking/icicibank/"
+creditcard_base_url = "https://creditcardapi.mybluemix.net/banking/icicibank/"
+pockets_base_url = "https://pocketsapi.mybluemix.net/rest/Card/"
+
 billers = ["Electricity", "LPG", "Mobile", "Internet"]
 creditCardTypes = ["MASTERCARD", "VISA", "PLATINUM", "SIGNATURE" ]
 
