@@ -1,0 +1,102 @@
+{
+  "intents": [
+    {
+      "slots": [
+        {
+          "name": "RECENT_DAYS",
+          "type": "AMAZON.DATE"
+        },
+        {
+          "name": "FROM_DAY",
+          "type": "AMAZON.DATE"
+        },
+        {
+          "name": "TO_DAY",
+          "type": "AMAZON.DATE"
+        }
+      ],
+      "intent": "RecentTransactionsIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "RECENT_DAYS",
+          "type": "AMAZON.DATE"
+        },
+        {
+          "name": "RECENT_DURATION",
+          "type": "AMAZON.DURATION"
+        }
+      ],
+      "intent": "MoneySpentIntent"
+    },
+    {
+      "intent": "BalanceIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "PAYEE_NAME",
+          "type": "LIST_OF_PAYEE_NAME"
+        },
+        {
+          "name": "PAYEE_AMOUNT",
+          "type": "AMAZON.NUMBER"
+        }
+      ],
+      "intent": "TransferIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "PAYEE_NAME",
+          "type": "LIST_OF_PAYEE_NAME"
+        }
+      ],
+      "intent": "AddPayeeIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "BILLER_NAME",
+          "type": "LIST_OF_BILL_NAME"
+        }
+      ],
+      "intent": "PayBillIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "BILLER_NAME",
+          "type": "LIST_OF_BILL_NAME"
+        },
+        {
+          "name": "BILLER_DATE",
+          "type": "AMAZON.DATE"
+        }
+      ],
+      "intent": "CheckBillIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "BILLER_NAME",
+          "type": "LIST_OF_BILL_NAME"
+        }
+      ],
+      "intent": "AddBillerIntent"
+    },
+    {
+      "intent": "AutoStartIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}

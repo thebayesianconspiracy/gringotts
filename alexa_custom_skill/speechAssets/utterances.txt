@@ -1,0 +1,20 @@
+RecentTransactionsIntent what were my recent transactions in the last {RECENT_DAYS} days
+RecentTransactionsIntent what were my recent transactions from {FROM_DAY} to {TO_DAY}
+RecentTransactionsIntent what were my recent transactions from {FROM_DAY}
+RecentTransactionsIntent {RECENT_DAYS} days
+RecentTransactionsIntent what were my recent transactions
+MoneySpentIntent how much money did I spend in the {RECENT_DAYS}
+MoneySpentIntent how much money did I spend in the {RECENT_DURATION}
+MoneySpentIntent how much money did I spend
+BalanceIntent what is my account balance
+TransferIntent transfer {PAYEE_AMOUNT} rupees to {PAYEE_NAME}
+TransferIntent pay {PAYEE_AMOUNT} rupees to {PAYEE_NAME}
+TransferIntent pay {PAYEE_NAME} {PAYEE_AMOUNT} rupees
+AddPayeeIntent add {PAYEE_NAME} as my payee
+PayBillIntent pay {BILLER_NAME} bill
+PayBillIntent I want to pay my {BILLER_NAME} bill
+CheckBillIntent what is my {BILLER_NAME} bill for {BILLER_DATE}
+CheckBillIntent how much is my {BILLER_NAME} bill for {BILLER_DATE}
+CheckBillIntent what is my {BILLER_NAME} bill
+CheckBillIntent how much is my {BILLER_NAME} bill
+AddBillerIntent add biller for {BILLER_NAME} 

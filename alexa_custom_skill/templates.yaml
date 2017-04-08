@@ -1,0 +1,17 @@
+welcome : Hi, I am Voice Pay. How can I help?
+
+balance_response : Your balance is {{balance}} rupees
+
+recent_transactions_response : Your transactions in the last {{recentDays}} days are
+recent_transactions_range_error : Please specify a time range
+
+money_spent_response : You have spent {{amount}} rupees in the last  {{recentDays}}
+
+transfer_response : I transferred {{payeeAmount}} to {{payeeName}}
+transfer_amount_error : Please specify an amount
+transfer_name_error : Please speciy payee name
+
+add_payee_response : I have added {{payeeName}} as a payee
+add_payee_name_error : Please speciy payee name properly
+
+request_process_error : There was an error in processing your request
