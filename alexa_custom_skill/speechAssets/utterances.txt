@@ -11,10 +11,12 @@ TransferIntent transfer {PAYEE_AMOUNT} rupees to {PAYEE_NAME}
 TransferIntent pay {PAYEE_AMOUNT} rupees to {PAYEE_NAME}
 TransferIntent pay {PAYEE_NAME} {PAYEE_AMOUNT} rupees
 AddPayeeIntent add {PAYEE_NAME} as my payee
-PayBillIntent pay {BILLER_NAME} bill
-PayBillIntent I want to pay my {BILLER_NAME} bill
-CheckBillIntent what is my {BILLER_NAME} bill for {BILLER_DATE}
-CheckBillIntent how much is my {BILLER_NAME} bill for {BILLER_DATE}
-CheckBillIntent what is my {BILLER_NAME} bill
-CheckBillIntent how much is my {BILLER_NAME} bill
-AddBillerIntent add biller for {BILLER_NAME} 
+PayBillIntent pay {BILL_NAME} bill
+PayBillIntent pay my {BILL_NAME} bill
+CheckBillIntent what is my {BILL_NAME} bill for {BILL_DATE}
+CheckBillIntent how much is my {BILL_NAME} bill for {BILL_DATE}
+CheckBillIntent what is my {BILL_NAME} bill
+CheckBillIntent how much is my {BILL_NAME} bill
+AddBillerIntent add {BILLER_NAME} for {BILL_NAME} bill payment
+AddBillerIntent add {BILL_NAME} biller
+AddBillerIntent add biller

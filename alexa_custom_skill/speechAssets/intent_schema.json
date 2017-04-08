@@ -58,7 +58,7 @@
     {
       "slots": [
         {
-          "name": "BILLER_NAME",
+          "name": "BILL_NAME",
           "type": "LIST_OF_BILL_NAME"
         }
       ],
@@ -67,11 +67,11 @@
     {
       "slots": [
         {
-          "name": "BILLER_NAME",
+          "name": "BILL_NAME",
           "type": "LIST_OF_BILL_NAME"
         },
         {
-          "name": "BILLER_DATE",
+          "name": "BILL_DATE",
           "type": "AMAZON.DATE"
         }
       ],
@@ -80,8 +80,12 @@
     {
       "slots": [
         {
-          "name": "BILLER_NAME",
+          "name": "BILL_NAME",
           "type": "LIST_OF_BILL_NAME"
+        },
+        {
+          "name": "BILLER_NAME",
+          "type": "AMAZON.Corporation"
         }
       ],
       "intent": "AddBillerIntent"

@@ -1,3 +1,4 @@
-LIST_OF_RECENT_DAYS_VALS	1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
-LIST_OF_PAYEE_NAME	Soumyadeep | Aditya | Vivek
-LIST_OF_BILL_NAME	electricity | mobile | landline | water
+LIST_OF_RECENT_DAYS_VALS	1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10	Delete  Edit
+LIST_OF_PAYEE_NAME	Soumyadeep | Aditya | Vivek	Delete  Edit
+LIST_OF_BILL_NAME	electricity | mobile | landline | water | credit card	Delete  Edit
+LIST_OF_BILLER_NAME	bescom | airtel | vodafone | jio | icici | hdfc
