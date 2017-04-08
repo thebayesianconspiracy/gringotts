@@ -49,7 +49,7 @@ def getRecentTransactions(recentDays, fromDay, toDay):
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         speech_text = 'Please specify a duration'
-        return question(speech_text).simple_card('GringottsResponse', speech_text)
+        return question(speech_text).simple_card('GringottsResponse', speech_text).reprompt("I didn't get that. What is the duration?")
     return statement("Error").simple_card('GringottsResponse', speech_text)
 
 @ask.intent('TransferIntent',
@@ -62,10 +62,10 @@ def transferMoney(recentDays, payeeName, payeeAmount):
             return statement(speech_text).simple_card('GringottsResponse', speech_text)
         else:
             speech_text = 'Please specify amount'
-            return question(speech_text).simple_card('GringottsResponse', speech_text)    
+            return question(speech_text).simple_card('GringottsResponse', speech_text).reprompt("I didn't get that. What amount do you want to transfer?")
     else :
         speech_text = 'Please repeat name'
-        return question(speech_text).simple_card('GringottsResponse', speech_text)
+        return question(speech_text).simple_card('GringottsResponse', speech_text).reprompt("I didn't get that. What is the name again?")
     return statement("Error").simple_card('GringottsResponse', speech_text)
 
 @ask.intent('MoneySpentIntent',
