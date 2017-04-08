@@ -17,4 +17,14 @@ add_payee_response : I have added {{payeeName}} as a payee
 add_payee_name_error : Please specify payee name properly
 add_payee_name_reprompt: I didn't understand. Please repeat payee name.
 
+pay_bill_response : I have paid the {{billName}} bill amounting to {{billAmount}} rupees
+pay_bill_name_error : Please specify the bill name
+
+check_bill_response : Your {{billName}} bill for {{billDate}} is {{billAmount}} rupees
+check_bill_name_error : Please specify a bill name
+
+add_biller_response : Your biller {{billerName}} for {{billName}} has been added
+add_biller_name_error : Please specify a biller name
+add_biller_bill_error : Please specify a bill name
+
 request_process_error : There was an error in processing your request

@@ -95,6 +95,50 @@ def addPayee(payeeName):
         speech_text = render_template('add_payee_name_error')
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
 
+
+@ask.intent('PayBillIntent',
+    mapping={'billName': 'BILL_NAME'})
+def payBill(billName):
+    if billName is not None:
+        print "billName " + billName
+        speech_text = render_template('pay_bill_response', billName=billName, billAmount=100)
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    else :
+        speech_text = render_template('pay_bill_name_error')
+        return question(speech_text).simple_card('GringottsResponse', speech_text)
+
+@ask.intent('CheckBillIntent',
+    mapping={'billName': 'BILL_NAME', 'billDate': 'BILL_DATE'})
+def checkBill(billName, billDate):
+    if billName is not None:
+        if billDate is not None:
+            print "billName " + billName + "billDate " + billDate
+            speech_text = render_template('check_bill_response', billName=billName, billAmount=100, billDate=billDate)
+            return statement(speech_text).simple_card('GringottsResponse', speech_text)
+        else:
+            print "billName " + billName + "billDate " + "this month"
+            speech_text = render_template('check_bill_response', billName=billName, billAmount=100, billDate="this month")
+            return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    else :
+        speech_text = render_template('check_bill_name_error')
+        return question(speech_text).simple_card('GringottsResponse', speech_text)
+
+@ask.intent('AddBillerIntent',
+    mapping={'billName': 'BILL_NAME', 'billerName': 'BILLER_NAME'})
+def checkBill(billName, billerName):
+    if billName is not None:
+        if billerName is not None:
+            print "billName " + billName + "billerName " + billerName
+            speech_text = render_template('add_biller_response', billName=billName, billerName=billerName)
+            return statement(speech_text).simple_card('GringottsResponse', speech_text)
+        else:
+            print "billName " + billName
+            speech_text = render_template('add_biller_name_error')
+            return question(speech_text).simple_card('GringottsResponse', speech_text)
+    else :
+        speech_text = render_template('add_biller_bill_error')
+        return question(speech_text).simple_card('GringottsResponse', speech_text)
+
 @ask.session_ended
 def session_ended():
     return "", 200
