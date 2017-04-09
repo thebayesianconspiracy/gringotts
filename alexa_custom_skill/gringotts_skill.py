@@ -182,6 +182,7 @@ def loggedin():
        return redirect(url_for("home"))
 
     print rest.getMaxFriendOwed(session['access_token'])
+    print rest.getSplitWiseBalance(session['access_token'])
     return render_template("loggedin.html")
 
 @app.route('/splitwise/logout')

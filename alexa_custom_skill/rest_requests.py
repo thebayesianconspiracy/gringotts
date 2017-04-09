@@ -111,10 +111,24 @@ def getCreditCardDetails(token, cardNumber):
     return callGet(url, payload)
 
 def getSplitWiseBalance(access_token):
-    sObj = Splitwise(consumer_key,consumer_secret)
-    sObj.setAccessToken(access_token)
-    friends = sObj.getFriends()
-    return callGet(url, payload)
+    if access_token is not None:
+        sObj = Splitwise(consumer_key,consumer_secret)
+        sObj.setAccessToken(access_token)
+        status_code = 200
+        friends = sObj.getFriends()
+        owedSum = 0
+        oweSum = 0
+        for friend in friends:
+            for balance in friend.getBalances():
+                if float(balance.getAmount()) > 0:
+                    owedSum = owedSum + float(balance.getAmount())
+                elif float(balance.getAmount()) < 0:
+                    oweSum = oweSum + float(balance.getAmount())
+        payload = {'owedShare': owedSum, 'oweShare': oweSum }
+    else:
+        status_code = 400
+        payload = {"error" : "can not access splitwise data"}
+    return status_code, payload
 
 def getMaxFriendOwed(access_token):
     sObj = Splitwise(consumer_key,consumer_secret)
@@ -129,7 +143,7 @@ def getMaxFriendOwed(access_token):
                 maxFriend = friend.getFirstName()
     #print "Max friend " + maxFriend + " Max Balance " + maxSum
     status_code = 200
-    payload = {'friend': maxFriend, 'amount': maxSum }
+    payload = {'friend': maxFriend, 'amount': float(maxSum) }
     return status_code, payload
 
 token = "f4773fe50e94"
