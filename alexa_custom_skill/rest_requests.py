@@ -1,8 +1,11 @@
 import json
 import requests
+from splitwise import Splitwise
 
 timeOut= 2.0
 client_id = "soumyadeep9@gmail.com"
+consumer_key = '9avqAwEDHj08BTSWo4rbklFSH9kBkDGYJVIcLuok'
+consumer_secret = 'nn93bOnzbVnTHodCep94BOOEEe4CO6vdkJKPbAZp'
 
 retail_base_url = "https://retailbanking.mybluemix.net/banking/icicibank/"
 debitcard_base_url = "https://debitcardapi.mybluemix.net/debit/icicibank/"
@@ -18,7 +21,7 @@ ERROR_TIMEOUT = -2
 ERROR_LIST  = -1
 
 def callGet(url, payload):
-    try: 
+    try:
         response = requests.get(url, params=payload,  timeout=timeOut)
     except:
         return ERROR_TIMEOUT, {}
@@ -29,7 +32,7 @@ def getAccountBalance(token, account_no):
     payload = {'client_id': client_id, 'token': token, 'accountno': account_no}
     url = retail_base_url + "balanceenquiry"
     return callGet(url, payload)
-        
+
 def getAccountSummary(token, custid, account_no):
     payload = {'client_id': client_id, 'token': token, 'accountno': account_no, 'custid': custid }
     url = retail_base_url + "account_summary"
@@ -39,12 +42,12 @@ def getMiniStatement(token, account_no):
     payload = {'client_id': client_id, 'token': token, 'accountno': account_no}
     url = retail_base_url + "recenttransaction"
     return callGet(url, payload)
- 
+
 def getnDaysTransaction(token, account_no, days):
     payload = {'client_id': client_id, 'token': token, 'accountno': account_no, 'days': days }
     url = retail_base_url + "ndaystransaction"
     return callGet(url, payload)
-     
+
 def getTransactionsInterval(token, accountno, fromdate, todate):
     payload = {'client_id': client_id, 'token': token, 'accountno': account_no, 'fromdate': fromdate, 'todate': todate }
     url = retail_base_url + "transactioninterval"
@@ -107,6 +110,28 @@ def getCreditCardDetails(token, cardNumber):
     url = pockets_base_url + "getCardDetails"
     return callGet(url, payload)
 
+def getSplitWiseBalance(access_token):
+    sObj = Splitwise(consumer_key,consumer_secret)
+    sObj.setAccessToken(access_token)
+    friends = sObj.getFriends()
+    return callGet(url, payload)
+
+def getMaxFriendOwed(access_token):
+    sObj = Splitwise(consumer_key,consumer_secret)
+    sObj.setAccessToken(access_token)
+    friends = sObj.getFriends()
+    maxSum = 0
+    maxFriend = ''
+    for friend in friends:
+        for balance in friend.getBalances():
+            if balance.getAmount() > maxSum:
+                maxSum = balance.getAmount()
+                maxFriend = friend.getFirstName()
+    #print "Max friend " + maxFriend + " Max Balance " + maxSum
+    status_code = 200
+    payload = {'friend': maxFriend, 'amount': maxSum }
+    return status_code, payload
+
 token = "f4773fe50e94"
 account_no = "4444777755551369"
 custid = "33336369"
@@ -138,7 +163,7 @@ cardType = creditCardTypes[0]
 cardNo = "1234567898765432"
 expDate = "10-19"
 cvvNo = "081"
-    
+
 def testAll():
     status, json = getAccountBalance(token, account_no)
     print status

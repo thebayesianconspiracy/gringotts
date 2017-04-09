@@ -181,11 +181,8 @@ def loggedin():
     if 'access_token' not in session:
        return redirect(url_for("home"))
 
-    sObj = Splitwise(consumer_key,consumer_secret)
-    sObj.setAccessToken(session['access_token'])
-
-    friends = sObj.getFriends()
-    return render_template("loggedin.html",friends=friends)
+    print rest.getMaxFriendOwed(session['access_token'])
+    return render_template("loggedin.html")
 
 @app.route('/splitwise/logout')
 def logout():
