@@ -2,17 +2,19 @@ import logging
 import json
 import sys
 import os, sys, inspect
-from flask import Flask, render_template
-from flask_ask import Ask, request, session, question, statement
+from flask import Flask, render_template, redirect, session, url_for, request
+from flask_ask import Ask, question, statement
 import rest_requests as rest
-
-
+from splitwise import Splitwise
 app = Flask(__name__)
 ask = Ask(app, "/")
+app.secret_key = "test_secret_key"
 logging.getLogger('flask_ask').setLevel(logging.DEBUG)
 
 token = "f4773fe50e94"
 account_no = "4444777755551369"
+consumer_key = '9avqAwEDHj08BTSWo4rbklFSH9kBkDGYJVIcLuok'
+consumer_secret = 'nn93bOnzbVnTHodCep94BOOEEe4CO6vdkJKPbAZp'
 
 @ask.launch
 def launch():
@@ -143,6 +145,52 @@ def checkBill(billName, billerName):
 def session_ended():
     return "", 200
 
+@app.route("/splitwise")
+def home():
+    if 'access_token' in session:
+        return redirect(url_for("loggedin"))
+    return render_template("home.html")
+
+@app.route("/splitwise/login")
+def login():
+
+    sObj = Splitwise(consumer_key,consumer_secret)
+    url, secret = sObj.getAuthorizeURL()
+    session['secret'] = secret
+    return redirect(url)
+
+
+@app.route("/splitwise/login/authorized")
+def authorize():
+
+    if 'secret' not in session:
+       return redirect(url_for("home"))
+
+    oauth_token    = request.args.get('oauth_token')
+    oauth_verifier = request.args.get('oauth_verifier')
+
+    sObj = Splitwise(consumer_key,consumer_secret)
+    access_token = sObj.getAccessToken(oauth_token,session['secret'],oauth_verifier)
+    session['access_token'] = access_token
+
+    return redirect(url_for("loggedin"))
+
+
+@app.route("/splitwise/loggedin")
+def loggedin():
+    if 'access_token' not in session:
+       return redirect(url_for("home"))
+
+    sObj = Splitwise(consumer_key,consumer_secret)
+    sObj.setAccessToken(session['access_token'])
+
+    friends = sObj.getFriends()
+    return render_template("loggedin.html",friends=friends)
+
+@app.route('/splitwise/logout')
+def logout():
+    session.pop('access_token', None)
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(threaded=True,debug=True)
