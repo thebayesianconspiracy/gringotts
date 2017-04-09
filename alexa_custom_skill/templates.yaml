@@ -28,3 +28,8 @@ add_biller_name_error : Please specify a biller name
 add_biller_bill_error : Please specify a bill name
 
 request_process_error : There was an error in processing your request
+
+ask_q1 : Please answer this. {{q1}}
+
+auth_verified : Perfect. You are authorized to do the current transaction.
+auth_error : Sorry, you are not authorized to do the current transaction.

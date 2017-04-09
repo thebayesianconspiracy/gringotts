@@ -1,10 +1,18 @@
 import logging
 import json
 import sys
+import random
+import copy
 import os, sys, inspect
 from flask import Flask, render_template
 from flask_ask import Ask, request, session, question, statement
 import rest_requests as rest
+
+
+questions = [["Who's your favourite actor?","Morgan freeman"],
+             ["How old were you when you first went out of India?", '16']
+            ]
+            
 
 
 app = Flask(__name__)
@@ -13,6 +21,7 @@ logging.getLogger('flask_ask').setLevel(logging.DEBUG)
 
 token = "f4773fe50e94"
 account_no = "4444777755551369"
+
 
 @ask.launch
 def launch():
@@ -138,6 +147,73 @@ def checkBill(billName, billerName):
     else :
         speech_text = render_template('add_biller_bill_error')
         return question(speech_text).simple_card('GringottsResponse', speech_text)
+
+
+@ask.intent('CheckAuth',
+    mapping={})
+def CheckAuth():
+    ques_copy = copy.deepcopy(questions)
+    q1 = random.choice(ques_copy)
+    print "question : " + q1[0]
+    
+    session.attributes['authorized'] = 0
+    speech_text = render_template('ask_q1', q1 = q1[0])
+    session.attributes['current_question'] = q1[0]
+    session.attributes['current_answer'] = q1[1]
+    session.attributes['question_number'] = 1
+    return question(speech_text).simple_card('GringottsResponse', speech_text)
+
+
+@ask.intent('VerifyAuthQOne',
+    mapping={'answer':'ANSWER_Q_ONE'})
+def AnswerOne(answer):
+
+    print 'answer' + answer
+    print 'stored_asnwer' + session.attributes['current_answer']
+    if (answer == session.attributes['current_answer']):
+        print "Correct Answer"
+        speech_text = render_template('auth_verified')
+        session.attributes['authorized'] = 1
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    else :
+        speech_text = render_template('auth_error')
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+
+
+
+@ask.intent('VerifyAuthQTwo',
+    mapping={'answer':'ANSWER_Q_TWO'})
+def AnswerOne(answer):
+    print 'answer' + answer
+    print 'stored_asnwer' + session.attributes['current_answer']
+    if (answer == session.attributes['current_answer']):
+        print "Correct Answer"
+        speech_text = render_template('auth_verified')
+        session.attributes['authorized'] = 1
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    else :
+        speech_text = render_template('auth_error')
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+
+
+
+
+@ask.intent('VerifyAuthQThree',
+    mapping={'answer':'ANSWER_Q_THREE'})
+def AnswerOne(answer):
+
+    print 'answer' + answer
+    print 'stored_asnwer' + session.attributes['current_answer']
+    if (answer == session.attributes['current_answer']):
+        print "Correct Answer"
+        speech_text = render_template('auth_verified')
+        session.attributes['authorized'] = 1
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    else :
+        speech_text = render_template('auth_error')
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    
+
 
 @ask.session_ended
 def session_ended():
