@@ -1,22 +1,24 @@
-RecentTransactionsIntent what were my recent transactions in the last {RECENT_DAYS} days
-RecentTransactionsIntent what were my recent transactions from {FROM_DAY} to {TO_DAY}
-RecentTransactionsIntent what were my recent transactions from {FROM_DAY}
-RecentTransactionsIntent {RECENT_DAYS} days
-RecentTransactionsIntent what were my recent transactions
-MoneySpentIntent how much money did I spend in the {RECENT_DAYS}
-MoneySpentIntent how much money did I spend in the {RECENT_DURATION}
-MoneySpentIntent how much money did I spend
+RecentTransactionsIntent what were my transactions from {FROM_DAY} to {TO_DAY}
+RecentTransactionsIntent what were my transactions from {FROM_DAY}
+RecentTransactionsIntent what were my transactions {FROM_DAY}
+RecentTransactionsIntent what are my transactions from {FROM_DAY} to {TO_DAY}
+RecentTransactionsIntent what are my transactions from {FROM_DAY}
+RecentTransactionsIntent what are my transactions {FROM_DAY}
+MoneySpentIntent How much money did I spent in {DURATION}
+DurationIntent from {FROM_DAY} to {TO_DAY}
+DurationIntent from {FROM_DAY}
+DurationIntent {FROM_DAY}
 BalanceIntent what is my account balance
+BalanceIntent how much money do I have have in my account
+BalanceIntent account balance please
+YesIntent yes please
+SplitwiseBalanceIntent What is my split wise balance
+SplitwiseMaxOweIntent Whom do I owe the most
+CheckAuth authorize me
+VerifyAuthQOne {ANSWER_Q_ONE}
+VerifyAuthQThree {ANSWER_Q_THREE}
+PayBillIntent pay {BILL_NAME} bill
+PayBillIntent pay my {BILL_NAME} bill
 TransferIntent transfer {PAYEE_AMOUNT} rupees to {PAYEE_NAME}
 TransferIntent pay {PAYEE_AMOUNT} rupees to {PAYEE_NAME}
 TransferIntent pay {PAYEE_NAME} {PAYEE_AMOUNT} rupees
-AddPayeeIntent add {PAYEE_NAME} as my payee
-PayBillIntent pay {BILL_NAME} bill
-PayBillIntent pay my {BILL_NAME} bill
-CheckBillIntent what is my {BILL_NAME} bill for {BILL_DATE}
-CheckBillIntent how much is my {BILL_NAME} bill for {BILL_DATE}
-CheckBillIntent what is my {BILL_NAME} bill
-CheckBillIntent how much is my {BILL_NAME} bill
-AddBillerIntent add {BILLER_NAME} for {BILL_NAME} bill payment
-AddBillerIntent add {BILL_NAME} biller
-AddBillerIntent add biller
