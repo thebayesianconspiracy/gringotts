@@ -2,7 +2,8 @@ import logging
 import json
 import sys
 import os, sys, inspect
-from flask import Flask, render_template, redirect, session, url_for, request
+from flask import Flask, render_template, redirect, url_for, request
+from flask import session as session_flask
 from flask_ask import Ask, question, statement
 import rest_requests as rest
 from splitwise import Splitwise
@@ -147,7 +148,7 @@ def session_ended():
 
 @app.route("/splitwise")
 def home():
-    if 'access_token' in session:
+    if 'access_token' in session_flask:
         return redirect(url_for("loggedin"))
     return render_template("home.html")
 
@@ -156,38 +157,38 @@ def login():
 
     sObj = Splitwise(consumer_key,consumer_secret)
     url, secret = sObj.getAuthorizeURL()
-    session['secret'] = secret
+    session_flask['secret'] = secret
     return redirect(url)
 
 
 @app.route("/splitwise/login/authorized")
 def authorize():
 
-    if 'secret' not in session:
+    if 'secret' not in session_flask:
        return redirect(url_for("home"))
 
     oauth_token    = request.args.get('oauth_token')
     oauth_verifier = request.args.get('oauth_verifier')
 
     sObj = Splitwise(consumer_key,consumer_secret)
-    access_token = sObj.getAccessToken(oauth_token,session['secret'],oauth_verifier)
-    session['access_token'] = access_token
+    access_token = sObj.getAccessToken(oauth_token,session_flask['secret'],oauth_verifier)
+    session_flask['access_token'] = access_token
 
     return redirect(url_for("loggedin"))
 
 
 @app.route("/splitwise/loggedin")
 def loggedin():
-    if 'access_token' not in session:
+    if 'access_token' not in session_flask:
        return redirect(url_for("home"))
 
-    print rest.getMaxFriendOwed(session['access_token'])
-    print rest.getSplitWiseBalance(session['access_token'])
+    print rest.getMaxFriendOwed(session_flask['access_token'])
+    print rest.getSplitWiseBalance(session_flask['access_token'])
     return render_template("loggedin.html")
 
 @app.route('/splitwise/logout')
 def logout():
-    session.pop('access_token', None)
+    session_flask.pop('access_token', None)
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
