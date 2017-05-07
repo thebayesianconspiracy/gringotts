@@ -4,9 +4,11 @@ import sys
 import os, sys, inspect
 from flask import Flask, render_template, redirect, url_for, request
 from flask import session as session_flask
-from flask_ask import Ask, question, statement
+from flask_ask import Ask, request, session, question, statement
 import rest_requests as rest
 from splitwise import Splitwise
+import datetime
+import copy, random
 app = Flask(__name__)
 ask = Ask(app, "/")
 app.secret_key = "test_secret_key"
@@ -17,6 +19,10 @@ account_no = "4444777755551369"
 consumer_key = '9avqAwEDHj08BTSWo4rbklFSH9kBkDGYJVIcLuok'
 consumer_secret = 'nn93bOnzbVnTHodCep94BOOEEe4CO6vdkJKPbAZp'
 
+questions = [["Who's your favourite actor?","brad Pitt"],
+             ["How old were you when you first went out of India?", '16']
+]
+
 @ask.launch
 def launch():
     speech_text = render_template('welcome')
@@ -25,43 +31,126 @@ def launch():
 @ask.intent('BalanceIntent')
 def getAccountBalance():
     response = rest.getAccountBalance(token, account_no)
-    if response[0] == 200:
-        balanceResponse = response[1]
-        balanceValue = balanceResponse[1].get('balance')
-        speech_text = render_template('balance_response', balance=balanceValue)
-    else:
-        speech_text = render_template('request_process_error')
+    speech_text = render_template('balance_response', balance=94563)
     return statement(speech_text).simple_card('GringottsResponse', speech_text)
 
-
 @ask.intent('RecentTransactionsIntent',
-    mapping={'recentDays': 'RECENT_DAYS', 'fromDay':'FROM_DAY', 'toDay' : 'TO_DAY'})
-def getRecentTransactions(recentDays, fromDay, toDay):
-    if recentDays is not None:
-        print "recentDays " + recentDays
-        speech_text = render_template('recent_transactions_response', recentDays=recentDays)
+            mapping={'fromDay':'FROM_DAY', 'toDay' : 'TO_DAY'}, default={'toDay': datetime.datetime.now().strftime ("%Y-%m-%d")  })
+def getRecentTransactions(fromDay, toDay):
+    session.attributes['root'] = 'transactions'
+    if fromDay is not None:
+        speech_text = render_template('recent_transactions_response', fromDay=fromDay, toDay=toDay)
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
-    elif fromDay is not None:
-        print "fromDay " + fromDay
-        speech_text = render_template('recent_transactions_response', recentDays=fromDay)
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
-    elif toDay is not None:
-        print "toDay " + toDay
-        speech_text = render_template('recent_transactions_response', recentDays=toDay)
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
-    else :
-        reprompt_text = render_template('recent_transaction_reprompt')
+    else:
+        print "Question"
+        reprompt_text = render_template('recent_transactions_reprompt')
         speech_text = render_template('recent_transactions_range_error')
         return question(speech_text).reprompt(reprompt_text)
 
-@ask.intent('TransferIntent',
-    mapping={'payeeName':'PAYEE_NAME', 'payeeAmount' : 'PAYEE_AMOUNT'})
+@ask.intent('DurationIntent', mapping={'fromDay':'FROM_DAY', 'toDay':'TO_DAY'}, default={'toDay': datetime.datetime.now().strftime ("%Y-%m-%d")  })
+def getDuration(fromDay, toDay):
+    root = session.attributes['root']
+    print root
+    if root == 'transactions':
+        if fromDay is not None:
+            speech_text = render_template('recent_transactions_response', fromDay=fromDay, toDay=toDay)
+            return statement(speech_text).simple_card('GringottsResponse', speech_text)
+        else:
+            reprompt_text = render_template('recent_transaction_reprompt')
+            speech_text = render_template('recent_transactions_range_error')
+            return question(speech_text).reprompt(reprompt_text)
+    else:
+        speech_text = render_template('wrong_intent_text')
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+
+@ask.intent('SplitwiseBalanceIntent')
+def splitwiseBalance():
+    speech_text = render_template('splitwise_balance_response')
+    return question(speech_text)
+
+@ask.intent('SplitwiseMaxOweIntent')
+def splitwiseMaxOwe():
+    speech_text = render_template('splitwise_max_owe_response')
+    return question(speech_text)
+
+@ask.intent('MoneySpentIntent',
+            mapping={'duration' : 'DURATION'}, default = { 'duration': 'P3D' })
+def getMoneySpent(duration):
+    if duration is not None:
+        speech_text = render_template('money_spent_response', amount=3478, duration=duration)
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    else :
+        speech_text = render_template('money_spent_error')
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+
+@ask.intent('YesIntent')
+def getConfirmation():
+#       if session.attributes['root'] == "paybillintent":
+    speech_text = render_template('auth_yes')
+    return question(speech_text).simple_card('GringottsResponse', speech_text)
+
+@ask.intent('CheckAuth', mapping={})
+def CheckAuth():
+    ques_copy = copy.deepcopy(questions)
+    q1 = ques_copy[0]
+    print "question : " + q1[0]
+    
+    session.attributes['authorized'] = 0
+    speech_text = render_template('ask_q1', q1 = q1[0])
+    session.attributes['current_question'] = q1[0]
+    session.attributes['current_answer'] = q1[1]
+    session.attributes['question_number'] = 1
+    return question(speech_text).simple_card('GringottsResponse', speech_text)
+
+
+@ask.intent('VerifyAuthQOne',mapping={'answer':'ANSWER_Q_ONE'})
+def AnswerOne(answer):
+    print 'answer' + answer
+    print 'stored_asnwer' + session.attributes['current_answer']
+    if (answer == session.attributes['current_answer']):
+        print "Correct Answer"
+        speech_text = render_template('auth_verified')
+        session.attributes['authorized'] = 1
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    else :
+        speech_text = render_template('auth_error')
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+
+@ask.intent('VerifyAuthQTwo', mapping={'answer':'ANSWER_Q_TWO'})
+def AnswerTwo(answer):
+    print 'answer' + answer
+    print 'stored_asnwer' + session.attributes['current_answer']
+    if (answer == session.attributes['current_answer']):
+        print "Correct Answer"
+        speech_text = render_template('auth_verified')
+        session.attributes['authorized'] = 1
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    else :
+        speech_text = render_template('auth_error')
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    
+
+@ask.intent('VerifyAuthQThree',mapping={'answer':'ANSWER_Q_THREE'})
+def AnswerThree(answer):
+    print 'answer' + answer
+    print 'stored_asnwer' + session.attributes['current_answer']
+    if (answer == session.attributes['current_answer']):
+        print "Correct Answer"
+        speech_text = render_template('auth_verified')
+        session.attributes['authorized'] = 1
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    else :
+        speech_text = render_template('auth_error')
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)                                                                                            
+
+#TODO: Add intents for name and amount
+@ask.intent('TransferIntent', mapping={'payeeName':'PAYEE_NAME', 'payeeAmount' : 'PAYEE_AMOUNT'})
 def transferMoney(recentDays, payeeName, payeeAmount):
     if payeeName is not None:
         if payeeAmount is not None:
             print "payeeName " + payeeName
             speech_text = render_template('transfer_response', payeeName=payeeName, payeeAmount=payeeAmount)
-            return statement(speech_text).simple_card('GringottsResponse', speech_text)
+            return question(speech_text).simple_card('GringottsResponse', speech_text)
         else:
             reprompt_text = render_template('transfer_amount_reprompt')
             speech_text = render_template('transfer_amount_error')
@@ -71,24 +160,9 @@ def transferMoney(recentDays, payeeName, payeeAmount):
         speech_text = render_template('transfer_name_error')
         return question(speech_text).reprompt(reprompt_text)
 
-@ask.intent('MoneySpentIntent',
-    mapping={'recentDays': 'RECENT_DAYS', 'recentDuration' : 'RECENT_DURATION'})
-def getMoneySpent(recentDays, recentDuration):
-    if recentDays is not None:
-        print "recentDays " + recentDays
-        speech_text = render_template('money_spent_response', amount=100, recentDays=str(recentDays))
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
-    elif recentDuration is not None:
-        print "recentDuration" + recentDuration
-        speech_text = render_template('money_spent_response', amount=100, recentDays=str(recentDuration))
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
-    else :
-        speech_text = render_template('recent_transactions_range_error')
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
-
-
+#TODO: Add payee details
 @ask.intent('AddPayeeIntent',
-    mapping={'payeeName': 'PAYEE_NAME'})
+            mapping={'payeeName': 'PAYEE_NAME'})
 def addPayee(payeeName):
     if payeeName is not None:
         print "payee name " + payeeName
@@ -98,20 +172,21 @@ def addPayee(payeeName):
         speech_text = render_template('add_payee_name_error')
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
 
-
+#TODO: Ask amount as response
 @ask.intent('PayBillIntent',
-    mapping={'billName': 'BILL_NAME'})
+            mapping={'billName': 'BILL_NAME'})
 def payBill(billName):
     if billName is not None:
         print "billName " + billName
-        speech_text = render_template('pay_bill_response', billName=billName, billAmount=100)
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+        speech_text = render_template('pay_bill_response', billName=billName, billAmount=678)
+        return question(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         speech_text = render_template('pay_bill_name_error')
         return question(speech_text).simple_card('GringottsResponse', speech_text)
 
+#TODO: Does not exist
 @ask.intent('CheckBillIntent',
-    mapping={'billName': 'BILL_NAME', 'billDate': 'BILL_DATE'})
+            mapping={'billName': 'BILL_NAME', 'billDate': 'BILL_DATE'})
 def checkBill(billName, billDate):
     if billName is not None:
         if billDate is not None:
@@ -126,8 +201,9 @@ def checkBill(billName, billDate):
         speech_text = render_template('check_bill_name_error')
         return question(speech_text).simple_card('GringottsResponse', speech_text)
 
+#TODO: Add biller details
 @ask.intent('AddBillerIntent',
-    mapping={'billName': 'BILL_NAME', 'billerName': 'BILLER_NAME'})
+            mapping={'billName': 'BILL_NAME', 'billerName': 'BILLER_NAME'})
 def checkBill(billName, billerName):
     if billName is not None:
         if billerName is not None:
