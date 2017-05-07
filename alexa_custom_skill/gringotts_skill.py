@@ -2,18 +2,22 @@ import logging
 import json
 import sys
 import os, sys, inspect
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for, request
+from flask import session as session_flask
 from flask_ask import Ask, request, session, question, statement
 import rest_requests as rest
+from splitwise import Splitwise
 import datetime
 import copy, random
-
 app = Flask(__name__)
 ask = Ask(app, "/")
+app.secret_key = "test_secret_key"
 logging.getLogger('flask_ask').setLevel(logging.DEBUG)
 
 token = "f4773fe50e94"
 account_no = "4444777755551369"
+consumer_key = '9avqAwEDHj08BTSWo4rbklFSH9kBkDGYJVIcLuok'
+consumer_secret = 'nn93bOnzbVnTHodCep94BOOEEe4CO6vdkJKPbAZp'
 
 questions = [["Who's your favourite actor?","brad Pitt"],
              ["How old were you when you first went out of India?", '16']
@@ -218,6 +222,50 @@ def checkBill(billName, billerName):
 def session_ended():
     return "", 200
 
+@app.route("/splitwise")
+def home():
+    if 'access_token' in session_flask:
+        return redirect(url_for("loggedin"))
+    return render_template("home.html")
+
+@app.route("/splitwise/login")
+def login():
+
+    sObj = Splitwise(consumer_key,consumer_secret)
+    url, secret = sObj.getAuthorizeURL()
+    session_flask['secret'] = secret
+    return redirect(url)
+
+
+@app.route("/splitwise/login/authorized")
+def authorize():
+
+    if 'secret' not in session_flask:
+       return redirect(url_for("home"))
+
+    oauth_token    = request.args.get('oauth_token')
+    oauth_verifier = request.args.get('oauth_verifier')
+
+    sObj = Splitwise(consumer_key,consumer_secret)
+    access_token = sObj.getAccessToken(oauth_token,session_flask['secret'],oauth_verifier)
+    session_flask['access_token'] = access_token
+
+    return redirect(url_for("loggedin"))
+
+
+@app.route("/splitwise/loggedin")
+def loggedin():
+    if 'access_token' not in session_flask:
+       return redirect(url_for("home"))
+
+    print rest.getMaxFriendOwed(session_flask['access_token'])
+    print rest.getSplitWiseBalance(session_flask['access_token'])
+    return render_template("loggedin.html")
+
+@app.route('/splitwise/logout')
+def logout():
+    session_flask.pop('access_token', None)
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(threaded=True,debug=True)
