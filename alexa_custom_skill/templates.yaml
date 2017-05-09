@@ -14,7 +14,7 @@ splitwise_balance_response: Your split wise states that you owe {{owe}} rupees a
 splitwise_max_owe_response: You owe {{owe}} to {{friend}}. Do you want to pay it?
 splitwise_login_response: Please login first, check the card on your Amazon Alexa app
 
-transfer_response : Payee does not exist in I.C.I.C.I list. Do you want to add a new payee?
+transfer_response : Payee does not exist in I.C.I.C.I list. You need to add the payee first
 transfer_amount_error : Please specify an amount
 transfer_amount_reprompt: I didnt get that. Please specify amount.
 transfer_name_error : Please specify payee name

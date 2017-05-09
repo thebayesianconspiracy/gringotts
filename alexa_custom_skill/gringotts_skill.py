@@ -5,7 +5,7 @@ import socket, re, os, sys, inspect
 from flask import Flask, render_template, redirect, url_for
 from flask import request as request_flask
 from flask import session as session_flask
-from flask_ask import Ask, request, session, question, statement
+from flask_ask import Ask, request, session, question, statement, dialog
 import rest_requests as rest
 from splitwise import Splitwise
 import datetime
@@ -88,6 +88,7 @@ def splitwiseMaxOwe():
 
 @ask.intent('MoneySpentIntent',
             mapping={'recent_duration' : 'RECENT_DURATION'})
+
 def getMoneySpent(recent_duration):
     if recent_duration is not None:
         duration = re.search('\d+', recent_duration).group(0)
@@ -104,8 +105,7 @@ def getMoneySpent(recent_duration):
             speech_text = render_template('icici_error')
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
-        speech_text = render_template('money_spent_error')
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+        return dialog().dialog_directive()
 
 @ask.intent('YesIntent')
 def getConfirmation():
@@ -170,19 +170,12 @@ def AnswerThree(answer):
 #TODO: Add intents for name and amount
 @ask.intent('TransferIntent', mapping={'payeeName':'PAYEE_NAME', 'payeeAmount' : 'PAYEE_AMOUNT'})
 def transferMoney(recentDays, payeeName, payeeAmount):
-    if payeeName is not None:
-        if payeeAmount is not None:
-            print "payeeName " + payeeName
+    if payeeName is not None and payeeAmount is not None:
+            print "payeeName - %s payeeAmount - %s" % (payeeName, payeeAmount)
             speech_text = render_template('transfer_response', payeeName=payeeName, payeeAmount=payeeAmount)
             return question(speech_text).simple_card('GringottsResponse', speech_text)
-        else:
-            reprompt_text = render_template('transfer_amount_reprompt')
-            speech_text = render_template('transfer_amount_error')
-            return question(speech_text).reprompt(reprompt_text)
     else :
-        reprompt_text = render_template('transfer_name_reprompt')
-        speech_text = render_template('transfer_name_error')
-        return question(speech_text).reprompt(reprompt_text)
+        return dialog().dialog_directive()
 
 #TODO: Add payee details
 @ask.intent('AddPayeeIntent',
