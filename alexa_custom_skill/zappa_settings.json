@@ -1,0 +1,6 @@
+{
+    "dev": {
+        "app_function": "gringotts_skill.app", 
+        "s3_bucket": "zappa-lus9pq562"
+    }
+}

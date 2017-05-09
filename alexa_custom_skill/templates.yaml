@@ -7,15 +7,16 @@ recent_transactions_response : Your transactions from {{fromDay}} to {{toDay}} a
 recent_transactions_range_error : Please specify a from-date or to-date or both.
 recent_transactions_reprompt : I did not understand. What are the dates did you specify?
 
-money_spent_response : You have spent {{amount}} rupees in the last 3 days
-money_spent_error : Please specify a range 
+money_spent_response : You have spent {{amount}} rupees in the {{duration}}
+money_spent_error : Please specify a range
 
-splitwise_balance_response: Your split wise states that you owe 4676 rupees and people owe you 456 rupees. Do want to know more?
-splitwise_max_owe_response: You owe 1256 to Aditya. Do you want to pay it?
-  
+splitwise_balance_response: Your split wise states that you owe {{owe}} rupees and people owe you {{owed}} rupees. Do want to know more?
+splitwise_max_owe_response: You owe {{owe}} to {{friend}}. Do you want to pay it?
+splitwise_login_response: Please login first, check the card on your Amazon Alexa app
+
 transfer_response : Payee does not exist in I.C.I.C.I list. Do you want to add a new payee?
 transfer_amount_error : Please specify an amount
-transfer_amount_reprompt: I didnt get that. Please specify amount. 
+transfer_amount_reprompt: I didnt get that. Please specify amount.
 transfer_name_error : Please specify payee name
 transfer_name_reprompt: I didnt get that. Whom do you want to transfer?
 
@@ -40,3 +41,9 @@ ask_q1 : Please answer this. {{q1}}
 
 auth_verified : Perfect. Your electricity bill has been paid.
 auth_error : Sorry, you are not authorized to do the current transaction.
+
+icici_error : Sorry, could not connect to ICICI bank API
+
+bye: Goodbye
+help: Hi. I am voice pay. You can ask me about your account balance, your spltiwise balance, transfer funds and do conventional banking the alexa way.
+help_reprompt: To know your account balance, ask what is my accoutn balance

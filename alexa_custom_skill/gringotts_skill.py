@@ -1,8 +1,9 @@
 import logging
 import json
 import sys
-import os, sys, inspect
-from flask import Flask, render_template, redirect, url_for, request
+import socket, re, os, sys, inspect
+from flask import Flask, render_template, redirect, url_for
+from flask import request as request_flask
 from flask import session as session_flask
 from flask_ask import Ask, request, session, question, statement
 import rest_requests as rest
@@ -31,7 +32,11 @@ def launch():
 @ask.intent('BalanceIntent')
 def getAccountBalance():
     response = rest.getAccountBalance(token, account_no)
-    speech_text = render_template('balance_response', balance=94563)
+    if (response[0] == 200):
+        print response[1][1]
+        speech_text = render_template('balance_response', balance=response[1][1]['balance'])
+    else:
+        speech_text = render_template('icici_error')
     return statement(speech_text).simple_card('GringottsResponse', speech_text)
 
 @ask.intent('RecentTransactionsIntent',
@@ -65,8 +70,16 @@ def getDuration(fromDay, toDay):
 
 @ask.intent('SplitwiseBalanceIntent')
 def splitwiseBalance():
-    speech_text = render_template('splitwise_balance_response')
-    return question(speech_text)
+    if 'access_token' in session_flask:
+        print session_flask['access_token']
+        response = rest.getSplitWiseBalance(session_flask['access_token'])
+        print response
+        speech_text = render_template('splitwise_balance_response', owe=response['owe'], owed=response['owed'])
+        return question(speech_text)
+    else:
+        speech_text = render_template('splitwise_login_response')
+        url = "http://" + socket.gethostbyname(socket.gethostname()) + ":5000/splitwise"
+        return statement(speech_text).standard_card(title="splitwise login", text=speech_text + " " + url)
 
 @ask.intent('SplitwiseMaxOweIntent')
 def splitwiseMaxOwe():
@@ -74,10 +87,21 @@ def splitwiseMaxOwe():
     return question(speech_text)
 
 @ask.intent('MoneySpentIntent',
-            mapping={'duration' : 'DURATION'}, default = { 'duration': 'P3D' })
-def getMoneySpent(duration):
-    if duration is not None:
-        speech_text = render_template('money_spent_response', amount=3478, duration=duration)
+            mapping={'recent_duration' : 'RECENT_DURATION'})
+def getMoneySpent(recent_duration):
+    if recent_duration is not None:
+        duration = re.search('\d+', recent_duration).group(0)
+        response = rest.getnDaysTransaction(token, account_no, duration)
+        print "getting data for days " + duration
+        if (response[0] == 200):
+            print response[1]
+            if (response[1][0]["message"] == "No Data Found"):
+                amount = 0
+            else:
+                amount = response[1][0]['message']
+            speech_text = render_template('money_spent_response', amount=amount, duration=duration)
+        else:
+            speech_text = render_template('icici_error')
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         speech_text = render_template('money_spent_error')
@@ -94,7 +118,7 @@ def CheckAuth():
     ques_copy = copy.deepcopy(questions)
     q1 = ques_copy[0]
     print "question : " + q1[0]
-    
+
     session.attributes['authorized'] = 0
     speech_text = render_template('ask_q1', q1 = q1[0])
     session.attributes['current_question'] = q1[0]
@@ -128,7 +152,7 @@ def AnswerTwo(answer):
     else :
         speech_text = render_template('auth_error')
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
-    
+
 
 @ask.intent('VerifyAuthQThree',mapping={'answer':'ANSWER_Q_THREE'})
 def AnswerThree(answer):
@@ -141,7 +165,7 @@ def AnswerThree(answer):
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         speech_text = render_template('auth_error')
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)                                                                                            
+        return statement(speech_text).simple_card('GringottsResponse', speech_text)
 
 #TODO: Add intents for name and amount
 @ask.intent('TransferIntent', mapping={'payeeName':'PAYEE_NAME', 'payeeAmount' : 'PAYEE_AMOUNT'})
@@ -222,6 +246,25 @@ def checkBill(billName, billerName):
 def session_ended():
     return "", 200
 
+
+@ask.intent('AMAZON.HelpIntent')
+def help():
+    help_text = render_template('help')
+    help_reprompt = render_template('help_reprompt')
+    return question(help_text).reprompt(help_reprompt)
+
+
+@ask.intent('AMAZON.StopIntent')
+def stop():
+    bye_text = render_template('bye')
+    return statement(bye_text)
+
+
+@ask.intent('AMAZON.CancelIntent')
+def cancel():
+    bye_text = render_template('bye')
+    return statement(bye_text)
+
 @app.route("/splitwise")
 def home():
     if 'access_token' in session_flask:
@@ -243,8 +286,8 @@ def authorize():
     if 'secret' not in session_flask:
        return redirect(url_for("home"))
 
-    oauth_token    = request.args.get('oauth_token')
-    oauth_verifier = request.args.get('oauth_verifier')
+    oauth_token    = request_flask.args.get('oauth_token')
+    oauth_verifier = request_flask.args.get('oauth_verifier')
 
     sObj = Splitwise(consumer_key,consumer_secret)
     access_token = sObj.getAccessToken(oauth_token,session_flask['secret'],oauth_verifier)

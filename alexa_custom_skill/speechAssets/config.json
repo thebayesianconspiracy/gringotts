@@ -1,0 +1,538 @@
+{
+  "intents": [
+    {
+      "name": "AddPayeeIntent",
+      "samples": [
+        "add {PAYEE_NAME} as my payee"
+      ],
+      "slots": [
+        {
+          "name": "PAYEE_NAME",
+          "type": "LIST_OF_PAYEE_NAME",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "AMAZON.CancelIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.HelpIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.StopIntent",
+      "samples": []
+    },
+    {
+      "name": "AutoStartIntent",
+      "samples": [],
+      "slots": []
+    },
+    {
+      "name": "BalanceIntent",
+      "samples": [
+        "what is my account balance",
+        "how much money do I have have in my account",
+        "account balance please"
+      ],
+      "slots": []
+    },
+    {
+      "name": "CheckBillIntent",
+      "samples": [
+        "what is my {BILL_NAME} bill for {BILL_DATE}",
+        "how much is my {BILL_NAME} bill for {BILL_DATE}",
+        "what is my {BILL_NAME} bill",
+        "how much is my {BILL_NAME} bill"
+      ],
+      "slots": [
+        {
+          "name": "BILL_NAME",
+          "type": "LIST_OF_BILL_NAME",
+          "samples": []
+        },
+        {
+          "name": "BILL_DATE",
+          "type": "AMAZON.DATE",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "DurationIntent",
+      "samples": [
+        "from {FROM_DAY} to {TO_DAY}",
+        "from {FROM_DAY}"
+      ],
+      "slots": [
+        {
+          "name": "FROM_DAY",
+          "type": "AMAZON.DATE",
+          "samples": []
+        },
+        {
+          "name": "TO_DAY",
+          "type": "AMAZON.DATE",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "MoneySpentIntent",
+      "samples": [
+        "how much money did I spend in the last {RECENT_DURATION}",
+        "how much money did I spend",
+        "money spent"
+      ],
+      "slots": [
+        {
+          "name": "RECENT_DURATION",
+          "type": "AMAZON.DURATION",
+          "samples": [
+            "{RECENT_DURATION} ",
+            "duration is {RECENT_DURATION} "
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PayBillIntent",
+      "samples": [
+        "pay {BILL_NAME} bill",
+        "pay my {BILL_NAME} bill"
+      ],
+      "slots": [
+        {
+          "name": "BILL_NAME",
+          "type": "LIST_OF_BILL_NAME",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "RecentTransactionsIntent",
+      "samples": [
+        "what were my transactions from {FROM_DAY} to {TO_DAY}",
+        "what were my transactions from {FROM_DAY}",
+        "what were my transactions {FROM_DAY}",
+        "what are my transactions from {FROM_DAY} to {TO_DAY}",
+        "what are my transactions from {FROM_DAY}",
+        "what are my transactions {FROM_DAY}"
+      ],
+      "slots": [
+        {
+          "name": "FROM_DAY",
+          "type": "AMAZON.DATE",
+          "samples": []
+        },
+        {
+          "name": "TO_DAY",
+          "type": "AMAZON.DATE",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "SplitwiseBalanceIntent",
+      "samples": [
+        "what is my splitwise balance",
+        "check my splitwise",
+        "how much do i owe on splitwise",
+        "how much money do i owe"
+      ],
+      "slots": []
+    },
+    {
+      "name": "SplitwiseMaxOweIntent",
+      "samples": [
+        "whom do i owe the most on splitwise",
+        "who do i owe the most"
+      ],
+      "slots": []
+    },
+    {
+      "name": "TransferIntent",
+      "samples": [
+        "transfer {PAYEE_AMOUNT} rupees to {PAYEE_NAME}",
+        "pay {PAYEE_AMOUNT} rupees to {PAYEE_NAME}",
+        "pay {PAYEE_NAME} {PAYEE_AMOUNT} rupees"
+      ],
+      "slots": [
+        {
+          "name": "PAYEE_NAME",
+          "type": "LIST_OF_PAYEE_NAME",
+          "samples": []
+        },
+        {
+          "name": "PAYEE_AMOUNT",
+          "type": "AMAZON.NUMBER",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "VerifyAuthQOne",
+      "samples": [],
+      "slots": [
+        {
+          "name": "ANSWER_Q_ONE",
+          "type": "AMAZON.Actor",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "VerifyAuthQThree",
+      "samples": [],
+      "slots": [
+        {
+          "name": "ANSWER_Q_THREE",
+          "type": "AMAZON.NUMBER",
+          "samples": []
+        }
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "LIST_OF_BILL_NAME",
+      "values": [
+        {
+          "name": {
+            "value": "electricity"
+          }
+        },
+        {
+          "name": {
+            "value": "mobile"
+          }
+        },
+        {
+          "name": {
+            "value": "landline"
+          }
+        },
+        {
+          "name": {
+            "value": "water"
+          }
+        },
+        {
+          "name": {
+            "value": "credit card"
+          }
+        }
+      ]
+    },
+    {
+      "name": "LIST_OF_BILLER_NAME",
+      "values": [
+        {
+          "name": {
+            "value": "bescom"
+          }
+        },
+        {
+          "name": {
+            "value": "airtel"
+          }
+        },
+        {
+          "name": {
+            "value": "vodafone"
+          }
+        },
+        {
+          "name": {
+            "value": "jio"
+          }
+        },
+        {
+          "name": {
+            "value": "icici"
+          }
+        },
+        {
+          "name": {
+            "value": "hdfc"
+          }
+        }
+      ]
+    },
+    {
+      "name": "LIST_OF_PAYEE_NAME",
+      "values": [
+        {
+          "name": {
+            "value": "Soumyadeep"
+          }
+        },
+        {
+          "name": {
+            "value": "Aditya"
+          }
+        },
+        {
+          "name": {
+            "value": "Vivek"
+          }
+        }
+      ]
+    },
+    {
+      "name": "LIST_OF_RECENT_DAYS_VALS",
+      "values": [
+        {
+          "name": {
+            "value": "1"
+          }
+        },
+        {
+          "name": {
+            "value": "2"
+          }
+        },
+        {
+          "name": {
+            "value": "3"
+          }
+        },
+        {
+          "name": {
+            "value": "4"
+          }
+        },
+        {
+          "name": {
+            "value": "5"
+          }
+        },
+        {
+          "name": {
+            "value": "6"
+          }
+        },
+        {
+          "name": {
+            "value": "7"
+          }
+        },
+        {
+          "name": {
+            "value": "8"
+          }
+        },
+        {
+          "name": {
+            "value": "9"
+          }
+        },
+        {
+          "name": {
+            "value": "10"
+          }
+        }
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "id": "Elicit.Intent-MoneySpentIntent.IntentSlot-RECENT_DURATION",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "Please specify number of days"
+        }
+      ]
+    }
+  ],
+  "dialog": {
+    "version": "1.0",
+    "intents": [
+      {
+        "name": "AddPayeeIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "PAYEE_NAME",
+            "type": "LIST_OF_PAYEE_NAME",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "AutoStartIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": []
+      },
+      {
+        "name": "BalanceIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": []
+      },
+      {
+        "name": "CheckBillIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "BILL_NAME",
+            "type": "LIST_OF_BILL_NAME",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "BILL_DATE",
+            "type": "AMAZON.DATE",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "DurationIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "FROM_DAY",
+            "type": "AMAZON.DATE",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "TO_DAY",
+            "type": "AMAZON.DATE",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "MoneySpentIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "RECENT_DURATION",
+            "type": "AMAZON.DURATION",
+            "elicitationRequired": true,
+            "confirmationRequired": false,
+            "prompts": {
+              "elicit": "Elicit.Intent-MoneySpentIntent.IntentSlot-RECENT_DURATION"
+            }
+          }
+        ]
+      },
+      {
+        "name": "PayBillIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "BILL_NAME",
+            "type": "LIST_OF_BILL_NAME",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "RecentTransactionsIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "FROM_DAY",
+            "type": "AMAZON.DATE",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "TO_DAY",
+            "type": "AMAZON.DATE",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "SplitwiseBalanceIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": []
+      },
+      {
+        "name": "SplitwiseMaxOweIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": []
+      },
+      {
+        "name": "TransferIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "PAYEE_NAME",
+            "type": "LIST_OF_PAYEE_NAME",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "PAYEE_AMOUNT",
+            "type": "AMAZON.NUMBER",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "VerifyAuthQOne",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "ANSWER_Q_ONE",
+            "type": "AMAZON.Actor",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "VerifyAuthQThree",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "ANSWER_Q_THREE",
+            "type": "AMAZON.NUMBER",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      }
+    ]
+  }
+}
