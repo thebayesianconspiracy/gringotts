@@ -20,9 +20,9 @@ transfer_amount_reprompt: I didnt get that. Please specify amount.
 transfer_name_error : Please specify payee name
 transfer_name_reprompt: I didnt get that. Whom do you want to transfer?
 
-add_payee_response : I have added {{payeeName}} as a payee
-add_payee_name_error : Please specify payee name properly
-add_payee_name_reprompt: I didnt understand. Please repeat payee name.
+add_payee_response : I have added {{payeeName}} as a payee with VPA {{payeeVPA}}
+add_payee_name_error : Account number not found for payee
+add_payee_api_error: Could not add payee. Payee already exists
 
 pay_bill_response : Your {{billName}} bill amounts to {{billAmount}} rupees. Please authorize to pay.
 pay_bill_name_error : Please specify the bill name

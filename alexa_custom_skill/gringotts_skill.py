@@ -15,7 +15,7 @@ ask = Ask(app, "/")
 app.secret_key = "test_secret_key"
 logging.getLogger('flask_ask').setLevel(logging.DEBUG)
 
-token = "f4773fe50e94"
+token = "e2e960794d44"
 account_no = "4444777755551369"
 consumer_key = '9avqAwEDHj08BTSWo4rbklFSH9kBkDGYJVIcLuok'
 consumer_secret = 'nn93bOnzbVnTHodCep94BOOEEe4CO6vdkJKPbAZp'
@@ -23,7 +23,11 @@ consumer_secret = 'nn93bOnzbVnTHodCep94BOOEEe4CO6vdkJKPbAZp'
 questions = [["Who's your favourite actor?","brad Pitt"],
              ["How old were you when you first went out of India?", '16']
 ]
-
+payee_details = {
+                'sam' : '4444777755551370',
+                'nick' : '4444777755551371',
+                'john' : '4444777755551372',
+                }
 @ask.launch
 def launch():
     speech_text = render_template('welcome')
@@ -179,15 +183,28 @@ def transferMoney(recentDays, payeeName, payeeAmount):
 
 #TODO: Add payee details
 @ask.intent('AddPayeeIntent',
-            mapping={'payeeName': 'PAYEE_NAME'})
-def addPayee(payeeName):
-    if payeeName is not None:
-        print "payee name " + payeeName
-        speech_text = render_template('add_payee_response', payeeName=payeeName)
+            mapping={'payeeName': 'PAYEE_NAME', 'payeeVPA' : 'PAYEE_VPA'})
+def addPayee(payeeName, payeeVPA):
+    if payeeName is not None and payeeVPA is not None:
+        payeeName = payeeName.lower();
+        payeeVPA = payeeVPA.lower();
+        print "payee name %s payeeVPA %s" % (payeeName, payeeVPA)
+        if payee_details.get(payeeName):
+            response = rest.createVPA(token, payee_details.get(payeeName), payeeVPA.replace(" at ", "@"))
+            if (response[0] == 200):
+                print response[1]
+                try:
+                    if (response[1][1]["response"].find("mapped successfully")) :
+                        speech_text = render_template('add_payee_response', payeeName=payeeName, payeeVPA=payeeVPA)
+                    else:
+                        speech_text = render_template('add_payee_api_error')
+                except (KeyError, IndexError):
+                    speech_text = render_template('add_payee_api_error')
+        else:
+            speech_text = render_template('add_payee_name_error')
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
-        speech_text = render_template('add_payee_name_error')
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+        return dialog().dialog_directive()
 
 #TODO: Ask amount as response
 @ask.intent('PayBillIntent',
@@ -304,4 +321,6 @@ def logout():
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
+    print rest.getAccountSummary(token, 33336369, account_no)
+    print rest.listPayee(token, 33336369)
     app.run(threaded=True,debug=True)
