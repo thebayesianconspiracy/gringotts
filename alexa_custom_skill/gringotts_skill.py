@@ -17,6 +17,7 @@ logging.getLogger('flask_ask').setLevel(logging.DEBUG)
 
 token = "e2e960794d44"
 account_no = "4444777755551369"
+customer_id = "33336369"
 consumer_key = '9avqAwEDHj08BTSWo4rbklFSH9kBkDGYJVIcLuok'
 consumer_secret = 'nn93bOnzbVnTHodCep94BOOEEe4CO6vdkJKPbAZp'
 
@@ -27,6 +28,11 @@ payee_details = {
                 'sam' : '4444777755551370',
                 'nick' : '4444777755551371',
                 'john' : '4444777755551372',
+                }
+vpa_details = {
+                'sam' : 'sam@icicibank',
+                'nick' : 'nick@icicibank',
+                'john' : 'john@icicibank',
                 }
 @ask.launch
 def launch():
@@ -55,22 +61,6 @@ def getRecentTransactions(fromDay, toDay):
         reprompt_text = render_template('recent_transactions_reprompt')
         speech_text = render_template('recent_transactions_range_error')
         return question(speech_text).reprompt(reprompt_text)
-
-@ask.intent('DurationIntent', mapping={'fromDay':'FROM_DAY', 'toDay':'TO_DAY'}, default={'toDay': datetime.datetime.now().strftime ("%Y-%m-%d")  })
-def getDuration(fromDay, toDay):
-    root = session.attributes['root']
-    print root
-    if root == 'transactions':
-        if fromDay is not None:
-            speech_text = render_template('recent_transactions_response', fromDay=fromDay, toDay=toDay)
-            return statement(speech_text).simple_card('GringottsResponse', speech_text)
-        else:
-            reprompt_text = render_template('recent_transaction_reprompt')
-            speech_text = render_template('recent_transactions_range_error')
-            return question(speech_text).reprompt(reprompt_text)
-    else:
-        speech_text = render_template('wrong_intent_text')
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
 
 @ask.intent('SplitwiseBalanceIntent')
 def splitwiseBalance():
@@ -110,12 +100,6 @@ def getMoneySpent(recent_duration):
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         return dialog().dialog_directive()
-
-@ask.intent('YesIntent')
-def getConfirmation():
-#       if session.attributes['root'] == "paybillintent":
-    speech_text = render_template('auth_yes')
-    return question(speech_text).simple_card('GringottsResponse', speech_text)
 
 @ask.intent('CheckAuth', mapping={})
 def CheckAuth():
@@ -176,8 +160,17 @@ def AnswerThree(answer):
 def transferMoney(recentDays, payeeName, payeeAmount):
     if payeeName is not None and payeeAmount is not None:
             print "payeeName - %s payeeAmount - %s" % (payeeName, payeeAmount)
-            speech_text = render_template('transfer_response', payeeName=payeeName, payeeAmount=payeeAmount)
-            return question(speech_text).simple_card('GringottsResponse', speech_text)
+            response = rest.upiFundTransferVtoV(token, customer_id, "soumyadeep@icicibank", vpa_details.get(payeeName.lower()), payeeAmount, "remarks")
+            if (response[0] == 200):
+                print response[1]
+                try:
+                    if (response[1][1]["status"] == "SUCCESS"):
+                        speech_text = render_template('transfer_response', payeeName=payeeName, payeeAmount=payeeAmount)
+                    else:
+                        speech_text = render_template('transfer_error')
+                except (KeyError, IndexError):
+                    speech_text = render_template('transfer_error')
+            return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         return dialog().dialog_directive()
 
@@ -321,6 +314,7 @@ def logout():
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
-    print rest.getAccountSummary(token, 33336369, account_no)
-    print rest.listPayee(token, 33336369)
+    #print rest.getAccountSummary(token, 33336369, account_no)
+    #print rest.listPayee(token, 33336369)
+    #print rest.createVPA(token, account_no, "soumyadeep@icicibank")
     app.run(threaded=True,debug=True)
