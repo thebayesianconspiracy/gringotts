@@ -3,13 +3,27 @@
     {
       "name": "AddPayeeIntent",
       "samples": [
-        "add {PAYEE_NAME} as my payee"
+        "add {PAYEE_NAME} as payee",
+        "add payee",
+        "add {PAYEE_NAME} as payee with vpa {PAYEE_VPA} ",
+        "add virtual payment address {PAYEE_VPA} "
       ],
       "slots": [
         {
           "name": "PAYEE_NAME",
           "type": "LIST_OF_PAYEE_NAME",
-          "samples": []
+          "samples": [
+            "payee name is {PAYEE_NAME} ",
+            "{PAYEE_NAME} "
+          ]
+        },
+        {
+          "name": "PAYEE_VPA",
+          "type": "LIST_OF_VPA",
+          "samples": [
+            "vpa is {PAYEE_VPA} ",
+            "{PAYEE_VPA} "
+          ]
         }
       ]
     },
@@ -24,11 +38,6 @@
     {
       "name": "AMAZON.StopIntent",
       "samples": []
-    },
-    {
-      "name": "AutoStartIntent",
-      "samples": [],
-      "slots": []
     },
     {
       "name": "BalanceIntent",
@@ -55,25 +64,6 @@
         },
         {
           "name": "BILL_DATE",
-          "type": "AMAZON.DATE",
-          "samples": []
-        }
-      ]
-    },
-    {
-      "name": "DurationIntent",
-      "samples": [
-        "from {FROM_DAY} to {TO_DAY}",
-        "from {FROM_DAY}"
-      ],
-      "slots": [
-        {
-          "name": "FROM_DAY",
-          "type": "AMAZON.DATE",
-          "samples": []
-        },
-        {
-          "name": "TO_DAY",
           "type": "AMAZON.DATE",
           "samples": []
         }
@@ -157,18 +147,26 @@
       "samples": [
         "transfer {PAYEE_AMOUNT} rupees to {PAYEE_NAME}",
         "pay {PAYEE_AMOUNT} rupees to {PAYEE_NAME}",
-        "pay {PAYEE_NAME} {PAYEE_AMOUNT} rupees"
+        "pay {PAYEE_NAME} {PAYEE_AMOUNT} rupees",
+        "transfer money",
+        "transfer {PAYEE_AMOUNT} rupees"
       ],
       "slots": [
         {
           "name": "PAYEE_NAME",
           "type": "LIST_OF_PAYEE_NAME",
-          "samples": []
+          "samples": [
+            "payee is {PAYEE_NAME} ",
+            "{PAYEE_NAME} "
+          ]
         },
         {
           "name": "PAYEE_AMOUNT",
           "type": "AMAZON.NUMBER",
-          "samples": []
+          "samples": [
+            "{PAYEE_AMOUNT} rupees",
+            "{PAYEE_AMOUNT} "
+          ]
         }
       ]
     },
@@ -266,17 +264,22 @@
       "values": [
         {
           "name": {
-            "value": "Soumyadeep"
+            "value": "sam"
           }
         },
         {
           "name": {
-            "value": "Aditya"
+            "value": "nick"
           }
         },
         {
           "name": {
-            "value": "Vivek"
+            "value": "john"
+          }
+        },
+        {
+          "name": {
+            "value": "ron"
           }
         }
       ]
@@ -335,9 +338,56 @@
           }
         }
       ]
+    },
+    {
+      "name": "LIST_OF_VPA",
+      "values": [
+        {
+          "name": {
+            "value": "nick@icicibank"
+          }
+        },
+        {
+          "name": {
+            "value": "sam@icicibank"
+          }
+        },
+        {
+          "name": {
+            "value": "john@icicibank"
+          }
+        },
+        {
+          "name": {
+            "value": "ron@icici"
+          }
+        }
+      ]
     }
   ],
   "prompts": [
+    {
+      "id": "Elicit.Intent-AddPayeeIntent.IntentSlot-PAYEE_NAME",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "what is the payee name"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-AddPayeeIntent.IntentSlot-PAYEE_VPA",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "what is payee virtual payment address"
+        }
+      ]
+    },
     {
       "id": "Elicit.Intent-MoneySpentIntent.IntentSlot-RECENT_DURATION",
       "promptVersion": "1.0",
@@ -346,6 +396,28 @@
         {
           "type": "PlainText",
           "value": "Please specify number of days"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-TransferIntent.IntentSlot-PAYEE_NAME",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "what is the payee name"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-TransferIntent.IntentSlot-PAYEE_AMOUNT",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "how much do you want to transfer"
         }
       ]
     }
@@ -361,17 +433,22 @@
           {
             "name": "PAYEE_NAME",
             "type": "LIST_OF_PAYEE_NAME",
-            "elicitationRequired": false,
+            "elicitationRequired": true,
             "confirmationRequired": false,
-            "prompts": {}
+            "prompts": {
+              "elicit": "Elicit.Intent-AddPayeeIntent.IntentSlot-PAYEE_NAME"
+            }
+          },
+          {
+            "name": "PAYEE_VPA",
+            "type": "LIST_OF_VPA",
+            "elicitationRequired": true,
+            "confirmationRequired": false,
+            "prompts": {
+              "elicit": "Elicit.Intent-AddPayeeIntent.IntentSlot-PAYEE_VPA"
+            }
           }
         ]
-      },
-      {
-        "name": "AutoStartIntent",
-        "confirmationRequired": false,
-        "prompts": {},
-        "slots": []
       },
       {
         "name": "BalanceIntent",
@@ -393,27 +470,6 @@
           },
           {
             "name": "BILL_DATE",
-            "type": "AMAZON.DATE",
-            "elicitationRequired": false,
-            "confirmationRequired": false,
-            "prompts": {}
-          }
-        ]
-      },
-      {
-        "name": "DurationIntent",
-        "confirmationRequired": false,
-        "prompts": {},
-        "slots": [
-          {
-            "name": "FROM_DAY",
-            "type": "AMAZON.DATE",
-            "elicitationRequired": false,
-            "confirmationRequired": false,
-            "prompts": {}
-          },
-          {
-            "name": "TO_DAY",
             "type": "AMAZON.DATE",
             "elicitationRequired": false,
             "confirmationRequired": false,
@@ -492,16 +548,20 @@
           {
             "name": "PAYEE_NAME",
             "type": "LIST_OF_PAYEE_NAME",
-            "elicitationRequired": false,
+            "elicitationRequired": true,
             "confirmationRequired": false,
-            "prompts": {}
+            "prompts": {
+              "elicit": "Elicit.Intent-TransferIntent.IntentSlot-PAYEE_NAME"
+            }
           },
           {
             "name": "PAYEE_AMOUNT",
             "type": "AMAZON.NUMBER",
-            "elicitationRequired": false,
+            "elicitationRequired": true,
             "confirmationRequired": false,
-            "prompts": {}
+            "prompts": {
+              "elicit": "Elicit.Intent-TransferIntent.IntentSlot-PAYEE_AMOUNT"
+            }
           }
         ]
       },
