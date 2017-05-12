@@ -10,6 +10,7 @@ import rest_requests as rest
 from splitwise import Splitwise
 import datetime
 import copy, random
+import requests
 app = Flask(__name__)
 ask = Ask(app, "/")
 app.secret_key = "test_secret_key"
@@ -101,7 +102,7 @@ def getMoneySpent(recent_duration):
     else :
         return dialog().dialog_directive()
 
-@ask.intent('CheckAuth', mapping={})
+@ask.intent('AuthorizeIntent', mapping={})
 def CheckAuth():
     ques_copy = copy.deepcopy(questions)
     q1 = ques_copy[0]
@@ -312,6 +313,31 @@ def loggedin():
 def logout():
     session_flask.pop('access_token', None)
     return redirect(url_for('home'))
+
+@app.route('/avsauth')
+def avsauth():
+    access_token    = request_flask.args.get('access_token')
+    refresh_token = request_flask.args.get('refresh_token')
+    code = request_flask.args.get('code')
+    print "access_token %s refresh_token %s code %s" % (access_token, refresh_token, code)
+
+    data = {
+        'grant_type':'authorization_code',
+        'code':code,
+        'client_id':'amzn1.application-oa2-client.eec9ebc38e7d4a9eb06c653bd474cd1b',
+        'client_secret':'99910b388d24d4c6d5ae6f1a0255733c71354d5cde62dc6c67b38517a5bd25bb',
+        'redirect_uri':'https://776c2c44.ngrok.io/avsauth'
+    }
+
+    # sending post request and saving response as response object
+    r = requests.post(url = 'https://api.amazon.com/auth/o2/token', data = data)
+
+    # extracting response text
+    r = r.json()
+    access_token = r['access_token']
+    refresh_token = r['refresh_token']
+    print "access_token %s refresh_token %s code %s" % (access_token, refresh_token, code)
+    return render_template("home.html")
 
 if __name__ == '__main__':
     #print rest.getAccountSummary(token, 33336369, account_no)
