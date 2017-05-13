@@ -173,8 +173,8 @@ def authFunct(funct, args, name, amount_passed):
     elif funct=='paybill':
         response = payBill(*args)
         if (response[0] == 200):
-            amount = rest.checkBill(billName)
-            print "billName " + billName
+            amount = checkBill(name)
+            print "billName " + name
             speech_text = render_template('pay_bill_response', billName=name, billAmount=amount)
             
         else:

@@ -98,7 +98,12 @@
         "what is my {BILL_NAME} bill for {BILL_DATE}",
         "how much is my {BILL_NAME} bill for {BILL_DATE}",
         "what is my {BILL_NAME} bill",
-        "how much is my {BILL_NAME} bill"
+        "how much is my {BILL_NAME} bill",
+        "check bill",
+        "check my {BILL_NAME} bill",
+        "check my bill for {BILL_DATE} ",
+        "check my bill",
+        "check my {BILL_NAME} bill for {BILL_DATE} "
       ],
       "slots": [
         {
@@ -142,7 +147,8 @@
       "name": "PayBillIntent",
       "samples": [
         "pay {BILL_NAME} bill",
-        "pay my {BILL_NAME} bill"
+        "pay my {BILL_NAME} bill",
+        "pay bill"
       ],
       "slots": [
         {
