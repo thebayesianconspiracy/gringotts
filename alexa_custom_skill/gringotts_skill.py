@@ -21,7 +21,7 @@ customer_id = "33336369"
 consumer_key = '9avqAwEDHj08BTSWo4rbklFSH9kBkDGYJVIcLuok'
 consumer_secret = 'nn93bOnzbVnTHodCep94BOOEEe4CO6vdkJKPbAZp'
 
-questions = [["Who's your favourite actor?","brad Pitt"],
+questions = [["Who's your favourite actor?","Angelina Jolie"],
              ["What's your favourite sport?", 'basketball'],
              ["What's your favourite animal?","lion"],
              ["What's your favourite color?","black"]]
@@ -136,9 +136,9 @@ def CheckAuth():
 def AnswerOne(answer1,answer2,answer3,answer4):
     print answer1,answer2,answer3,answer4
     print 'stored_asnwer' + session.attributes['current_answer']
-    if(answer1=="None"):
-        if(answer2=="None"):
-            if(answer3=="None"):
+    if(answer1 is None):
+        if(answer2 is None):
+            if(answer3 is None):
                 answer = answer4
             else:
                 answer = answer3
@@ -146,16 +146,56 @@ def AnswerOne(answer1,answer2,answer3,answer4):
             answer = answer2
     else:
         answer = answer1
+
     print answer
     if (answer == session.attributes['current_answer']):
         print "Correct Answer"
-        speech_text = render_template('auth_verified')
+        res = rest.authFunct(session.attributes['funct'],session.attributes['args'], session.attributes['name'],session.attributes['amount'])
         session.attributes['authorized'] = 1
+        
+        response = rest.getAccountBalance(token, account_no)
+        if (response[0] == 200):
+            print response[1][1]
+            text2 = render_template('balance_response', balance=response[1][1]['balance'])
+            speech_text = render_template('auth_verified') + ' And ' + res + ' ' + text2
+        else:
+            speech_text = render_template('auth_verified') + ' And ' + res
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         speech_text = render_template('auth_error')
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
 
+@ask.intent('TransferIntent', mapping={'payeeName':'PAYEE_NAME', 'payeeAmount' : 'PAYEE_AMOUNT'})
+def transferMoney(payeeName, payeeAmount):
+    if payeeName is not None and payeeAmount is not None:
+        print "payeeName - %s payeeAmount - %s" % (payeeName, payeeAmount)
+        session.attributes['args'] = [token, customer_id, "soumyadeep@icicibank", vpa_details.get(payeeName.lower()), payeeAmount, "remarks"]
+        session.attributes['funct'] = 'transfer'
+        session.attributes['name'] = payeeName
+        session.attributes['amount'] = payeeAmount
+        speech_text = render_template('do_auth')
+        return question(speech_text).simple_card('GringottsResponse', speech_text)
+    else :
+        return dialog().dialog_directive()
+
+@ask.intent('PayBillIntent',
+            mapping={'billName': 'BILL_NAME'})
+def payBill(billName):
+    if billName is not None:
+        session.attributes['args'] = [billName]
+        session.attributes['funct'] = 'paybill'
+        session.attributes['name'] = billName
+        session.attributes['amount'] = 0
+        speech_text = render_template('do_auth')
+        return question(speech_text).simple_card('GringottsResponse', speech_text)
+    else :
+        return dialog().dialog_directive()
+
+
+
+
+
+'''
 #Done
 @ask.intent('TransferIntent', mapping={'payeeName':'PAYEE_NAME', 'payeeAmount' : 'PAYEE_AMOUNT'})
 def transferMoney(recentDays, payeeName, payeeAmount):
@@ -174,7 +214,7 @@ def transferMoney(recentDays, payeeName, payeeAmount):
             return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         return dialog().dialog_directive()
-
+'''
 #Done
 @ask.intent('AddPayeeIntent',
             mapping={'payeeName': 'PAYEE_NAME', 'payeeVPA' : 'PAYEE_VPA'})
@@ -200,6 +240,7 @@ def addPayee(payeeName, payeeVPA):
     else :
         return dialog().dialog_directive()
 
+'''
 #Done
 @ask.intent('PayBillIntent',
             mapping={'billName': 'BILL_NAME'})
@@ -217,7 +258,7 @@ def payBill(billName):
     else :
         speech_text = render_template('pay_bill_name_error')
         return question(speech_text).simple_card('GringottsResponse', speech_text)
-
+'''
 #Done
 @ask.intent('CheckBillIntent',
             mapping={'billName': 'BILL_NAME', 'billDate': 'BILL_DATE'})
@@ -227,8 +268,7 @@ def checkBilly(billName, billDate):
         speech_text = render_template('check_bill_response', billName=billName, billAmount=amount, billDate=billDate)
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
-        speech_text = render_template('check_bill_name_error')
-        return question(speech_text).simple_card('GringottsResponse', speech_text)
+        return dialog().dialog_directive()
 
 @ask.session_ended
 def session_ended():

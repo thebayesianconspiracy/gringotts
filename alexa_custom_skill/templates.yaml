@@ -3,42 +3,43 @@ welcome : Hi, I am Voice Pay. How can I help?
 wrong_intent_text : Please restart session
 balance_response : Your balance is {{balance}} rupees.
 
-recent_transactions_response : Your transactions from {{fromDay}} to {{toDay}} are booo
+recent_transactions_response : Your transactions from {{fromDay}} to {{toDay}} are booo.
 recent_transactions_range_error : Please specify a from-date or to-date or both.
 recent_transactions_reprompt : I did not understand. What are the dates did you specify?
 
-money_spent_response : You have spent {{amount}} rupees in the last {{duration}} days
+money_spent_response : You have spent {{amount}} rupees in the last {{duration}} days.
 
 splitwise_balance_response: Your split wise states that you owe {{owe}} rupees and people owe you {{owed}} rupees. Do want to know more?
 splitwise_max_owe_response: You owe {{owe}} to {{friend}}. Do you want to pay it?
 splitwise_login_response: Please login first, check the card on your Amazon Alexa app
 
-transfer_response : An sum of {{payeeAmount}} rupees has been transferred to {{payeeName}}
+transfer_response : A sum of {{payeeAmount}} rupees has been transferred to {{payeeName}}.
 transfer_error : Could not transfer. Have you added the payee?
 
-add_payee_response : I have added {{payeeName}} as a payee with VPA {{payeeVPA}}
-add_payee_api_error: Could not add payee. Payee already exists
+add_payee_response : I have added {{payeeName}} as a payee with VPA {{payeeVPA}}.
+add_payee_api_error: Could not add payee. Payee already exists.
 
 pay_bill_response : Your {{billName}} bill of {{billAmount}} rupees has been paid.
-pay_bill_name_error : Please specify the bill name
+pay_bill_name_error : Please specify the bill name.
 
 check_bill_response : Your {{billName}} bill for {{billDate}} is {{billAmount}} rupees
-check_bill_name_error : Please specify a bill name
+check_bill_name_error : Please specify a bill name.
 
-add_biller_response : Your biller {{billerName}} for {{billName}} has been added
-add_biller_name_error : Please specify a biller name
-add_biller_bill_error : Please specify a bill name
+add_biller_response : Your biller {{billerName}} for {{billName}} has been added.
+add_biller_name_error : Please specify a biller name.
+add_biller_bill_error : Please specify a bill name.
 
-request_process_error : There was an error in processing your request
+request_process_error : There was an error in processing your request.
 auth_yes : Sure! But please authorize first.
 
-ask_q1 : Please answer this. {{q1}}
+ask_q : Please answer this. {{q}}
 
-auth_verified : Perfect. Your electricity bill has been paid.
+do_auth : Please authorize yourself to complete this transaction.
+auth_verified : Perfect. You are authorized to do the current transaction.
 auth_error : Sorry, you are not authorized to do the current transaction.
 
-icici_error : Sorry, could not connect to ICICI bank API
+icici_error : Sorry, could not connect to ICICI bank API.
 
-bye: Goodbye
+bye: Goodbye.
 help: Hi. I am voice pay. You can ask me about your account balance, your spltiwise balance, transfer funds and do conventional banking the alexa way.
-help_reprompt: To know your account balance, ask what is my accoutn balance
+help_reprompt: To know your account balance, ask what is my accoutn balance.

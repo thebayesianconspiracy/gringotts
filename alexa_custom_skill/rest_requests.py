@@ -1,6 +1,7 @@
 import json
 import requests
 from splitwise import Splitwise
+from flask import render_template
 
 timeOut= 2.0
 client_id = "soumyadeep9@gmail.com"
@@ -149,6 +150,34 @@ def getMaxFriendOwed(access_token):
     payload = {'friend': maxFriend, 'amount': float(maxSum) }
     return status_code, payload
 
+
+def authFunct(funct, args, name, amount_passed):
+    if funct=='transfer':
+        response = upiFundTransferVtoV(*args)
+        if (response[0] == 200):
+            print response[1]
+            try:
+                if (response[1][1]["status"] == "SUCCESS"):
+                    speech_text = render_template('transfer_response', payeeName=name, payeeAmount=amount_passed)
+                else:
+                    speech_text = render_template('transfer_error')
+            except (KeyError, IndexError):
+                speech_text = render_template('transfer_error')
+        else:
+            speech_text = render_template('icici_error')
+        return speech_text
+
+
+    elif funct=='paybill':
+        response = payBill(*args)
+        if (response[0] == 200):
+            amount = rest.checkBill(billName)
+            print "billName " + billName
+            speech_text = render_template('pay_bill_response', billName=name, billAmount=amount)
+            
+        else:
+            speech_text = render_template('icici_error')
+        return speech_text
 
 billTypes = {
     "electricity" : {
