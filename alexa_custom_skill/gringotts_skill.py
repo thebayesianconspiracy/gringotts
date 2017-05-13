@@ -119,52 +119,34 @@ def getMoneySpent(recent_duration):
 
 
 
-#Now
-@ask.intent('CheckAuth', mapping={})
+#Done
+@ask.intent('AuthQ', mapping={})
 def CheckAuth():
-    ques_copy = copy.deepcopy(questions)
-    q1 = ques_copy[0]
-    print "question : " + q1[0]
+    qa = random.choice(questions)
+    print "question : " + qa[0]
 
     session.attributes['authorized'] = 0
-    speech_text = render_template('ask_q1', q1 = q1[0])
-    session.attributes['current_question'] = q1[0]
-    session.attributes['current_answer'] = q1[1]
-    session.attributes['question_number'] = 1
+    speech_text = render_template('ask_q', q = qa[0])
+    session.attributes['current_question'] = qa[0]
+    session.attributes['current_answer'] = qa[1]
     return question(speech_text).simple_card('GringottsResponse', speech_text)
 
 #Now
-@ask.intent('VerifyAuthQOne',mapping={'answer':'ANSWER_Q_ONE'})
-def AnswerOne(answer):
-    print 'answer' + answer
+@ask.intent('AuthA',mapping={'answer1':'AUTH_A_ONE','answer2':'AUTH_A_TWO','answer3':'AUTH_A_THREE','answer4':'AUTH_A_FOUR' })
+def AnswerOne(answer1,answer2,answer3,answer4):
+    print answer1,answer2,answer3,answer4
     print 'stored_asnwer' + session.attributes['current_answer']
-    if (answer == session.attributes['current_answer']):
-        print "Correct Answer"
-        speech_text = render_template('auth_verified')
-        session.attributes['authorized'] = 1
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
-    else :
-        speech_text = render_template('auth_error')
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
-#Now
-@ask.intent('VerifyAuthQTwo', mapping={'answer':'ANSWER_Q_TWO'})
-def AnswerTwo(answer):
-    print 'answer' + answer
-    print 'stored_asnwer' + session.attributes['current_answer']
-    if (answer == session.attributes['current_answer']):
-        print "Correct Answer"
-        speech_text = render_template('auth_verified')
-        session.attributes['authorized'] = 1
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
-    else :
-        speech_text = render_template('auth_error')
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
-
-
-@ask.intent('VerifyAuthQThree',mapping={'answer':'ANSWER_Q_THREE'})
-def AnswerThree(answer):
-    print 'answer' + answer
-    print 'stored_asnwer' + session.attributes['current_answer']
+    if(answer1=="None"):
+        if(answer2=="None"):
+            if(answer3=="None"):
+                answer = answer4
+            else:
+                answer = answer3
+        else:
+            answer = answer2
+    else:
+        answer = answer1
+    print answer
     if (answer == session.attributes['current_answer']):
         print "Correct Answer"
         speech_text = render_template('auth_verified')
