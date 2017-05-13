@@ -40,6 +40,50 @@
       "samples": []
     },
     {
+      "name": "AuthA",
+      "samples": [
+        "{AUTH_A_ONE} ",
+        "{AUTH_A_TWO} ",
+        "{AUTH_A_THREE} ",
+        "{AUTH_A_FOUR} "
+      ],
+      "slots": [
+        {
+          "name": "AUTH_A_ONE",
+          "type": "AMAZON.Actor",
+          "samples": []
+        },
+        {
+          "name": "AUTH_A_TWO",
+          "type": "AMAZON.Sport",
+          "samples": []
+        },
+        {
+          "name": "AUTH_A_THREE",
+          "type": "AMAZON.Animal",
+          "samples": []
+        },
+        {
+          "name": "AUTH_A_FOUR",
+          "type": "AMAZON.Color",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "AuthQ",
+      "samples": [
+        "{AUTH_Q} "
+      ],
+      "slots": [
+        {
+          "name": "AUTH_Q",
+          "type": "AUTH_TRIGGER",
+          "samples": []
+        }
+      ]
+    },
+    {
       "name": "BalanceIntent",
       "samples": [
         "what is my account balance",
@@ -179,61 +223,19 @@
           ]
         }
       ]
-    },
-    {
-      "name": "VerifyAuthQFour",
-      "samples": [
-        "{ANSWER_Q_FOUR} "
-      ],
-      "slots": [
-        {
-          "name": "ANSWER_Q_FOUR",
-          "type": "AMAZON.Color",
-          "samples": []
-        }
-      ]
-    },
-    {
-      "name": "VerifyAuthQOne",
-      "samples": [
-        "{ANSWER_Q_ONE} "
-      ],
-      "slots": [
-        {
-          "name": "ANSWER_Q_ONE",
-          "type": "AMAZON.Actor",
-          "samples": []
-        }
-      ]
-    },
-    {
-      "name": "VerifyAuthQThree",
-      "samples": [
-        "{ANSWER_Q_THREE} "
-      ],
-      "slots": [
-        {
-          "name": "ANSWER_Q_THREE",
-          "type": "AMAZON.Animal",
-          "samples": []
-        }
-      ]
-    },
-    {
-      "name": "VerifyAuthQTwo",
-      "samples": [
-        "{ANSWER_Q_TWO} "
-      ],
-      "slots": [
-        {
-          "name": "ANSWER_Q_TWO",
-          "type": "AMAZON.Sport",
-          "samples": []
-        }
-      ]
     }
   ],
   "types": [
+    {
+      "name": "AUTH_TRIGGER",
+      "values": [
+        {
+          "name": {
+            "value": "authorize me"
+          }
+        }
+      ]
+    },
     {
       "name": "LIST_OF_BILL_NAME",
       "values": [
@@ -519,6 +521,55 @@
         ]
       },
       {
+        "name": "AuthA",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "AUTH_A_ONE",
+            "type": "AMAZON.Actor",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "AUTH_A_TWO",
+            "type": "AMAZON.Sport",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "AUTH_A_THREE",
+            "type": "AMAZON.Animal",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "AUTH_A_FOUR",
+            "type": "AMAZON.Color",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "AuthQ",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "AUTH_Q",
+            "type": "AUTH_TRIGGER",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
         "name": "BalanceIntent",
         "confirmationRequired": false,
         "prompts": {},
@@ -636,62 +687,6 @@
             "prompts": {
               "elicit": "Elicit.Intent-TransferIntent.IntentSlot-PAYEE_AMOUNT"
             }
-          }
-        ]
-      },
-      {
-        "name": "VerifyAuthQFour",
-        "confirmationRequired": false,
-        "prompts": {},
-        "slots": [
-          {
-            "name": "ANSWER_Q_FOUR",
-            "type": "AMAZON.Color",
-            "elicitationRequired": false,
-            "confirmationRequired": false,
-            "prompts": {}
-          }
-        ]
-      },
-      {
-        "name": "VerifyAuthQOne",
-        "confirmationRequired": false,
-        "prompts": {},
-        "slots": [
-          {
-            "name": "ANSWER_Q_ONE",
-            "type": "AMAZON.Actor",
-            "elicitationRequired": false,
-            "confirmationRequired": false,
-            "prompts": {}
-          }
-        ]
-      },
-      {
-        "name": "VerifyAuthQThree",
-        "confirmationRequired": false,
-        "prompts": {},
-        "slots": [
-          {
-            "name": "ANSWER_Q_THREE",
-            "type": "AMAZON.Animal",
-            "elicitationRequired": false,
-            "confirmationRequired": false,
-            "prompts": {}
-          }
-        ]
-      },
-      {
-        "name": "VerifyAuthQTwo",
-        "confirmationRequired": false,
-        "prompts": {},
-        "slots": [
-          {
-            "name": "ANSWER_Q_TWO",
-            "type": "AMAZON.Sport",
-            "elicitationRequired": false,
-            "confirmationRequired": false,
-            "prompts": {}
           }
         ]
       }
