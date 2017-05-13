@@ -60,12 +60,16 @@
         {
           "name": "BILL_NAME",
           "type": "LIST_OF_BILL_NAME",
-          "samples": []
+          "samples": [
+            "{BILL_NAME} bill"
+          ]
         },
         {
           "name": "BILL_DATE",
-          "type": "AMAZON.DATE",
-          "samples": []
+          "type": "AMAZON.Month",
+          "samples": [
+            "{BILL_DATE} "
+          ]
         }
       ]
     },
@@ -74,7 +78,9 @@
       "samples": [
         "how much money did I spend in the last {RECENT_DURATION}",
         "how much money did I spend",
-        "money spent"
+        "money spent",
+        "how much did I spend in the last {RECENT_DURATION} ",
+        "how much did I spend"
       ],
       "slots": [
         {
@@ -82,7 +88,8 @@
           "type": "AMAZON.DURATION",
           "samples": [
             "{RECENT_DURATION} ",
-            "duration is {RECENT_DURATION} "
+            "duration is {RECENT_DURATION} ",
+            "{RECENT_DURATION} days"
           ]
         }
       ]
@@ -97,7 +104,9 @@
         {
           "name": "BILL_NAME",
           "type": "LIST_OF_BILL_NAME",
-          "samples": []
+          "samples": [
+            "{BILL_NAME}  bill"
+          ]
         }
       ]
     },
@@ -149,7 +158,8 @@
         "pay {PAYEE_AMOUNT} rupees to {PAYEE_NAME}",
         "pay {PAYEE_NAME} {PAYEE_AMOUNT} rupees",
         "transfer money",
-        "transfer {PAYEE_AMOUNT} rupees"
+        "transfer {PAYEE_AMOUNT} rupees",
+        "pay money"
       ],
       "slots": [
         {
@@ -171,8 +181,23 @@
       ]
     },
     {
+      "name": "VerifyAuthQFour",
+      "samples": [
+        "{ANSWER_Q_FOUR} "
+      ],
+      "slots": [
+        {
+          "name": "ANSWER_Q_FOUR",
+          "type": "AMAZON.Color",
+          "samples": []
+        }
+      ]
+    },
+    {
       "name": "VerifyAuthQOne",
-      "samples": [],
+      "samples": [
+        "{ANSWER_Q_ONE} "
+      ],
       "slots": [
         {
           "name": "ANSWER_Q_ONE",
@@ -183,11 +208,26 @@
     },
     {
       "name": "VerifyAuthQThree",
-      "samples": [],
+      "samples": [
+        "{ANSWER_Q_THREE} "
+      ],
       "slots": [
         {
           "name": "ANSWER_Q_THREE",
-          "type": "AMAZON.NUMBER",
+          "type": "AMAZON.Animal",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "VerifyAuthQTwo",
+      "samples": [
+        "{ANSWER_Q_TWO} "
+      ],
+      "slots": [
+        {
+          "name": "ANSWER_Q_TWO",
+          "type": "AMAZON.Sport",
           "samples": []
         }
       ]
@@ -209,17 +249,12 @@
         },
         {
           "name": {
-            "value": "landline"
+            "value": "LPG"
           }
         },
         {
           "name": {
-            "value": "water"
-          }
-        },
-        {
-          "name": {
-            "value": "credit card"
+            "value": "internet"
           }
         }
       ]
@@ -389,13 +424,46 @@
       ]
     },
     {
+      "id": "Elicit.Intent-CheckBillIntent.IntentSlot-BILL_NAME",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "what type of bill do you want to look up"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-CheckBillIntent.IntentSlot-BILL_DATE",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "For what duration do you need the bill amount"
+        }
+      ]
+    },
+    {
       "id": "Elicit.Intent-MoneySpentIntent.IntentSlot-RECENT_DURATION",
       "promptVersion": "1.0",
       "definitionVersion": "1.0",
       "variations": [
         {
           "type": "PlainText",
-          "value": "Please specify number of days"
+          "value": "Please specify number of days for which you want your expenses"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-PayBillIntent.IntentSlot-BILL_NAME",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "What bill do you want to pay, again?"
         }
       ]
     },
@@ -464,16 +532,20 @@
           {
             "name": "BILL_NAME",
             "type": "LIST_OF_BILL_NAME",
-            "elicitationRequired": false,
+            "elicitationRequired": true,
             "confirmationRequired": false,
-            "prompts": {}
+            "prompts": {
+              "elicit": "Elicit.Intent-CheckBillIntent.IntentSlot-BILL_NAME"
+            }
           },
           {
             "name": "BILL_DATE",
-            "type": "AMAZON.DATE",
-            "elicitationRequired": false,
+            "type": "AMAZON.Month",
+            "elicitationRequired": true,
             "confirmationRequired": false,
-            "prompts": {}
+            "prompts": {
+              "elicit": "Elicit.Intent-CheckBillIntent.IntentSlot-BILL_DATE"
+            }
           }
         ]
       },
@@ -501,9 +573,11 @@
           {
             "name": "BILL_NAME",
             "type": "LIST_OF_BILL_NAME",
-            "elicitationRequired": false,
+            "elicitationRequired": true,
             "confirmationRequired": false,
-            "prompts": {}
+            "prompts": {
+              "elicit": "Elicit.Intent-PayBillIntent.IntentSlot-BILL_NAME"
+            }
           }
         ]
       },
@@ -566,6 +640,20 @@
         ]
       },
       {
+        "name": "VerifyAuthQFour",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "ANSWER_Q_FOUR",
+            "type": "AMAZON.Color",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
         "name": "VerifyAuthQOne",
         "confirmationRequired": false,
         "prompts": {},
@@ -586,7 +674,21 @@
         "slots": [
           {
             "name": "ANSWER_Q_THREE",
-            "type": "AMAZON.NUMBER",
+            "type": "AMAZON.Animal",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "VerifyAuthQTwo",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "ANSWER_Q_TWO",
+            "type": "AMAZON.Sport",
             "elicitationRequired": false,
             "confirmationRequired": false,
             "prompts": {}
