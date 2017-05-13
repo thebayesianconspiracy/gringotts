@@ -15,6 +15,9 @@ ask = Ask(app, "/")
 app.secret_key = "test_secret_key"
 logging.getLogger('flask_ask').setLevel(logging.DEBUG)
 
+external_tokens={}
+
+
 token = "e2e960794d44"
 account_no = "4444777755551369"
 customer_id = "33336369"
@@ -69,15 +72,19 @@ def getRecentTransactions(fromDay, toDay):
         return question(speech_text).reprompt(reprompt_text)
 
 
-#Later
+#Done
 @ask.intent('SplitwiseBalanceIntent')
 def splitwiseBalance():
-    if 'access_token' in session_flask:
-        print session_flask['access_token']
-        response = rest.getSplitWiseBalance(session_flask['access_token'])
+    if 'splitwise' in external_tokens:
+        print external_tokens['splitwise'], 'yoyoyoyoyoyoy'
+        response = rest.getSplitWiseBalance(external_tokens['splitwise'])
         print response
-        speech_text = render_template('splitwise_balance_response', owe=response['owe'], owed=response['owed'])
-        return question(speech_text)
+        if response[0]==200:
+            speech_text = render_template('splitwise_balance_response', owe=(response[1]['oweShare']*(-1)), owed=response[1]['owedShare'])
+            return statement(speech_text)
+        else:
+            speech_text = render_template('splitwise_balance_error')
+            return statement(speech_text)
     else:
         speech_text = render_template('splitwise_login_response')
         url = "http://" + socket.gethostbyname(socket.gethostname()) + ":5000/splitwise"
@@ -87,8 +94,21 @@ def splitwiseBalance():
 #Later
 @ask.intent('SplitwiseMaxOweIntent')
 def splitwiseMaxOwe():
-    speech_text = render_template('splitwise_max_owe_response')
-    return question(speech_text)
+    if 'splitwise' in external_tokens:
+        print external_tokens['splitwise']
+        response = rest.getMaxFriendOwed(external_tokens['splitwise'])
+        print response
+        if response[0]==200:
+            speech_text = render_template('splitwise_max_owe_response', owe=(response[1]['amount']*(-1)), friend=response[1]['friend'])
+            return statement(speech_text)
+        else:
+            speech_text = render_template('splitwise_balance_error')
+            return statement(speech_text)
+    else:
+        speech_text = render_template('splitwise_login_response')
+        url = "http://" + socket.gethostbyname(socket.gethostname()) + ":5000/splitwise"
+        return statement(speech_text).standard_card(title="splitwise login", text=speech_text + " " + url)
+
 
 @ask.intent('MoneySpentIntent',
             mapping={'recent_duration' : 'RECENT_DURATION'})
@@ -320,6 +340,7 @@ def authorize():
     sObj = Splitwise(consumer_key,consumer_secret)
     access_token = sObj.getAccessToken(oauth_token,session_flask['secret'],oauth_verifier)
     session_flask['access_token'] = access_token
+    external_tokens['splitwise'] = access_token
 
     return redirect(url_for("loggedin"))
 
@@ -329,6 +350,7 @@ def loggedin():
     if 'access_token' not in session_flask:
        return redirect(url_for("home"))
 
+    external_tokens['splitwise'] = session_flask['access_token'] 
     print rest.getMaxFriendOwed(session_flask['access_token'])
     print rest.getSplitWiseBalance(session_flask['access_token'])
     return render_template("loggedin.html")

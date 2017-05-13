@@ -138,12 +138,14 @@ def getMaxFriendOwed(access_token):
     sObj = Splitwise(consumer_key,consumer_secret)
     sObj.setAccessToken(access_token)
     friends = sObj.getFriends()
-    maxSum = 0
+    maxSum = 100000
     maxFriend = ''
     for friend in friends:
         for balance in friend.getBalances():
-            if balance.getAmount() > maxSum:
-                maxSum = balance.getAmount()
+            print balance.getAmount(), friend.getFirstName()
+            if float(balance.getAmount()) < maxSum:
+
+                maxSum = float(balance.getAmount())
                 maxFriend = friend.getFirstName()
     #print "Max friend " + maxFriend + " Max Balance " + maxSum
     status_code = 200

@@ -9,9 +9,10 @@ recent_transactions_reprompt : I did not understand. What are the dates did you 
 
 money_spent_response : You have spent {{amount}} rupees in the last {{duration}} days.
 
-splitwise_balance_response: Your split wise states that you owe {{owe}} rupees and people owe you {{owed}} rupees. Do want to know more?
-splitwise_max_owe_response: You owe {{owe}} to {{friend}}. Do you want to pay it?
-splitwise_login_response: Please login first, check the card on your Amazon Alexa app
+splitwise_balance_response: Your split wise states that you owe {{owe}} rupees and people owe you {{owed}} rupees.
+splitwise_max_owe_response: You owe {{owe}} rupees to {{friend}}.
+splitwise_login_response: Please login first, check the card on your Amazon Alexa app.
+splitwise_balance_error : Sorry, there was an error. Try again.
 
 transfer_response : A sum of {{payeeAmount}} rupees has been transferred to {{payeeName}}.
 transfer_error : Could not transfer. Have you added the payee?
