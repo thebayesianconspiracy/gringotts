@@ -78,8 +78,11 @@ def addBiller(token, billerdetail, state, custid, nickname, consumerno):
     url = biller_base_url + "addbiller"
     return callGet(url, payload)
 
-def payBill(token, custid, nickname, amount):
-    payload = {'client_id': client_id, 'token': token, 'nickname': nickname, 'amount': amount, 'custid': custid }
+def checkBill(billName):
+    return billTypes[billName]['amount']
+
+def payBill(billName):
+    payload = {'client_id': client_id, 'token': token, 'nickname': billTypes[billName]['nickname'], 'amount': billTypes[billName]['amount'], 'custid': custid }
     url = biller_base_url + "billpay"
     return callGet(url, payload)
 
@@ -146,7 +149,41 @@ def getMaxFriendOwed(access_token):
     payload = {'friend': maxFriend, 'amount': float(maxSum) }
     return status_code, payload
 
-token = "f4773fe50e94"
+
+billTypes = {
+    "electricity" : {
+        "billerdetail" : "Electricity Board",
+        "state" : "GUJARAT",
+        "nickname" : "ece",
+        "consumerno" : "90345672",
+        "amount" : 1000,
+        },
+    "LPG" : {
+        "billerdetail" : "HP",
+        "state" : "GUJARAT",
+        "nickname" : "gas",
+        "consumerno" : "90345672",
+        "amount" : 400,
+        },
+    "mobile" : {
+        "billerdetail" : "Vodafone",
+        "state" : "GUJARAT",
+        "nickname" : "mob",
+        "consumerno" : "9916733098",
+        "amount" : 675,
+        },
+    "internet" : {
+        "billerdetail" : "Reliance Jio",
+        "state" : "GUJARAT",
+        "nickname" : "net",
+        "consumerno" : "90345672",
+        "amount" : 1250,
+        },
+}
+
+
+
+token = "e2e960794d44"
 account_no = "4444777755551369"
 custid = "33336369"
 days = 2
@@ -160,11 +197,7 @@ debit_card_no = "3477551166996369"
 cvv = "871"
 expiry_date = "10-19"
 
-billername = billers[0]
-billerdetail = "TataPower"
-state = "gujarat"
-nickname = "ece"
-consumerno = "90345672"
+
 vpa = "soumyadeep@icici"
 
 payerCustId = custid
@@ -180,7 +213,7 @@ cvvNo = "081"
 
 def testAll():
     status, json = getAccountBalance(token, account_no)
-    print status
+    print status, json
     status, json = getAccountSummary(token, custid, account_no)
     print status
     status, json = getMiniStatement(token, account_no)
@@ -196,11 +229,11 @@ def testAll():
     status, json = authDebitCardDetails(token, custid, debit_card_no, cvv, expiry_date)
     print status
     status, json = getBillerDetails(token, billername)
-    print status
+    print status, json
     status, json = addBiller(token, billerdetail, state, custid, nickname, consumerno)
-    print status
+    print status, json
     status, json = payBill(token, custid, nickname, amount)
-    print status
+    print status, json
     status, json = createVPA(token, account_no, vpa)
     print status
     status, json = upiFundTransferVtoV(token, payerCustId, payerVPA, payeeVPA, amount, remarks)
@@ -212,4 +245,23 @@ def testAll():
     status, json = getCreditCardDetails(token, cardNo)
     print status
 
+
+#btype = "electricity"
+#billerdetail = billTypes[btype]['billerdetail']
+#state = billTypes[btype]['state']
+#nickname = billTypes[btype]['nickname']
+#consumerno = billTypes[btype]['consumerno']
 #testAll()
+
+def testOne():
+    #status, json = getBillerDetails(token,"Internet")
+    #status, json = payBill(token, custid, nickname, amount)
+    #status, json = addBiller(token, billerdetail, state, custid, nickname, consumerno)
+    status, json = payBill(token,custid, nickname, amount)
+    
+
+    print status, json
+    
+#testOne()
+
+
