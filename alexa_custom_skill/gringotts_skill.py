@@ -334,10 +334,10 @@ def avsauth():
 
     # extracting response text
     r = r.json()
-    access_token = r['access_token']
-    refresh_token = r['refresh_token']
-    print "access_token %s refresh_token %s code %s" % (access_token, refresh_token, code)
-    return render_template("home.html")
+    session_flask['avs_access_token'] = r['access_token']
+    session_flask['avs_refresh_token'] = r['refresh_token']
+    print "access_token %s refresh_token %s code %s" % (session_flask['avs_access_token'], session_flask['avs_refresh_token'], code)
+    return render_template("avsloggedin.html")
 
 if __name__ == '__main__':
     #print rest.getAccountSummary(token, 33336369, account_no)
