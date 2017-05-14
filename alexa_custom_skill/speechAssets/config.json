@@ -3,13 +3,27 @@
     {
       "name": "AddPayeeIntent",
       "samples": [
-        "add {PAYEE_NAME} as my payee"
+        "add {PAYEE_NAME} as payee",
+        "add payee",
+        "add {PAYEE_NAME} as payee with vpa {PAYEE_VPA} ",
+        "add virtual payment address {PAYEE_VPA} "
       ],
       "slots": [
         {
           "name": "PAYEE_NAME",
           "type": "LIST_OF_PAYEE_NAME",
-          "samples": []
+          "samples": [
+            "payee name is {PAYEE_NAME} ",
+            "{PAYEE_NAME} "
+          ]
+        },
+        {
+          "name": "PAYEE_VPA",
+          "type": "LIST_OF_VPA",
+          "samples": [
+            "vpa is {PAYEE_VPA} ",
+            "{PAYEE_VPA} "
+          ]
         }
       ]
     },
@@ -26,9 +40,48 @@
       "samples": []
     },
     {
-      "name": "AutoStartIntent",
-      "samples": [],
-      "slots": []
+      "name": "AuthA",
+      "samples": [
+        "{AUTH_A_ONE} ",
+        "{AUTH_A_TWO} ",
+        "{AUTH_A_THREE} ",
+        "{AUTH_A_FOUR} "
+      ],
+      "slots": [
+        {
+          "name": "AUTH_A_ONE",
+          "type": "AMAZON.Actor",
+          "samples": []
+        },
+        {
+          "name": "AUTH_A_TWO",
+          "type": "AMAZON.Sport",
+          "samples": []
+        },
+        {
+          "name": "AUTH_A_THREE",
+          "type": "AMAZON.Animal",
+          "samples": []
+        },
+        {
+          "name": "AUTH_A_FOUR",
+          "type": "AMAZON.Color",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "AuthQ",
+      "samples": [
+        "{AUTH_Q} "
+      ],
+      "slots": [
+        {
+          "name": "AUTH_Q",
+          "type": "AUTH_TRIGGER",
+          "samples": []
+        }
+      ]
     },
     {
       "name": "BalanceIntent",
@@ -45,37 +98,27 @@
         "what is my {BILL_NAME} bill for {BILL_DATE}",
         "how much is my {BILL_NAME} bill for {BILL_DATE}",
         "what is my {BILL_NAME} bill",
-        "how much is my {BILL_NAME} bill"
+        "how much is my {BILL_NAME} bill",
+        "check bill",
+        "check my {BILL_NAME} bill",
+        "check my bill for {BILL_DATE} ",
+        "check my bill",
+        "check my {BILL_NAME} bill for {BILL_DATE} "
       ],
       "slots": [
         {
           "name": "BILL_NAME",
           "type": "LIST_OF_BILL_NAME",
-          "samples": []
+          "samples": [
+            "{BILL_NAME} bill"
+          ]
         },
         {
           "name": "BILL_DATE",
-          "type": "AMAZON.DATE",
-          "samples": []
-        }
-      ]
-    },
-    {
-      "name": "DurationIntent",
-      "samples": [
-        "from {FROM_DAY} to {TO_DAY}",
-        "from {FROM_DAY}"
-      ],
-      "slots": [
-        {
-          "name": "FROM_DAY",
-          "type": "AMAZON.DATE",
-          "samples": []
-        },
-        {
-          "name": "TO_DAY",
-          "type": "AMAZON.DATE",
-          "samples": []
+          "type": "AMAZON.Month",
+          "samples": [
+            "{BILL_DATE} "
+          ]
         }
       ]
     },
@@ -84,7 +127,9 @@
       "samples": [
         "how much money did I spend in the last {RECENT_DURATION}",
         "how much money did I spend",
-        "money spent"
+        "money spent",
+        "how much did I spend in the last {RECENT_DURATION} ",
+        "how much did I spend"
       ],
       "slots": [
         {
@@ -92,7 +137,8 @@
           "type": "AMAZON.DURATION",
           "samples": [
             "{RECENT_DURATION} ",
-            "duration is {RECENT_DURATION} "
+            "duration is {RECENT_DURATION} ",
+            "{RECENT_DURATION} days"
           ]
         }
       ]
@@ -101,13 +147,16 @@
       "name": "PayBillIntent",
       "samples": [
         "pay {BILL_NAME} bill",
-        "pay my {BILL_NAME} bill"
+        "pay my {BILL_NAME} bill",
+        "pay bill"
       ],
       "slots": [
         {
           "name": "BILL_NAME",
           "type": "LIST_OF_BILL_NAME",
-          "samples": []
+          "samples": [
+            "{BILL_NAME}  bill"
+          ]
         }
       ]
     },
@@ -157,45 +206,42 @@
       "samples": [
         "transfer {PAYEE_AMOUNT} rupees to {PAYEE_NAME}",
         "pay {PAYEE_AMOUNT} rupees to {PAYEE_NAME}",
-        "pay {PAYEE_NAME} {PAYEE_AMOUNT} rupees"
+        "pay {PAYEE_NAME} {PAYEE_AMOUNT} rupees",
+        "transfer money",
+        "transfer {PAYEE_AMOUNT} rupees",
+        "pay money"
       ],
       "slots": [
         {
           "name": "PAYEE_NAME",
           "type": "LIST_OF_PAYEE_NAME",
-          "samples": []
+          "samples": [
+            "payee is {PAYEE_NAME} ",
+            "{PAYEE_NAME} "
+          ]
         },
         {
           "name": "PAYEE_AMOUNT",
           "type": "AMAZON.NUMBER",
-          "samples": []
-        }
-      ]
-    },
-    {
-      "name": "VerifyAuthQOne",
-      "samples": [],
-      "slots": [
-        {
-          "name": "ANSWER_Q_ONE",
-          "type": "AMAZON.Actor",
-          "samples": []
-        }
-      ]
-    },
-    {
-      "name": "VerifyAuthQThree",
-      "samples": [],
-      "slots": [
-        {
-          "name": "ANSWER_Q_THREE",
-          "type": "AMAZON.NUMBER",
-          "samples": []
+          "samples": [
+            "{PAYEE_AMOUNT} rupees",
+            "{PAYEE_AMOUNT} "
+          ]
         }
       ]
     }
   ],
   "types": [
+    {
+      "name": "AUTH_TRIGGER",
+      "values": [
+        {
+          "name": {
+            "value": "authorize me"
+          }
+        }
+      ]
+    },
     {
       "name": "LIST_OF_BILL_NAME",
       "values": [
@@ -211,17 +257,12 @@
         },
         {
           "name": {
-            "value": "landline"
+            "value": "LPG"
           }
         },
         {
           "name": {
-            "value": "water"
-          }
-        },
-        {
-          "name": {
-            "value": "credit card"
+            "value": "internet"
           }
         }
       ]
@@ -266,17 +307,22 @@
       "values": [
         {
           "name": {
-            "value": "Soumyadeep"
+            "value": "sam"
           }
         },
         {
           "name": {
-            "value": "Aditya"
+            "value": "nick"
           }
         },
         {
           "name": {
-            "value": "Vivek"
+            "value": "john"
+          }
+        },
+        {
+          "name": {
+            "value": "ron"
           }
         }
       ]
@@ -335,9 +381,78 @@
           }
         }
       ]
+    },
+    {
+      "name": "LIST_OF_VPA",
+      "values": [
+        {
+          "name": {
+            "value": "nick@icicibank"
+          }
+        },
+        {
+          "name": {
+            "value": "sam@icicibank"
+          }
+        },
+        {
+          "name": {
+            "value": "john@icicibank"
+          }
+        },
+        {
+          "name": {
+            "value": "ron@icici"
+          }
+        }
+      ]
     }
   ],
   "prompts": [
+    {
+      "id": "Elicit.Intent-AddPayeeIntent.IntentSlot-PAYEE_NAME",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "what is the payee name"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-AddPayeeIntent.IntentSlot-PAYEE_VPA",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "what is payee virtual payment address"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-CheckBillIntent.IntentSlot-BILL_NAME",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "what type of bill do you want to look up"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-CheckBillIntent.IntentSlot-BILL_DATE",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "For what duration do you need the bill amount"
+        }
+      ]
+    },
     {
       "id": "Elicit.Intent-MoneySpentIntent.IntentSlot-RECENT_DURATION",
       "promptVersion": "1.0",
@@ -345,7 +460,40 @@
       "variations": [
         {
           "type": "PlainText",
-          "value": "Please specify number of days"
+          "value": "Please specify number of days for which you want your expenses"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-PayBillIntent.IntentSlot-BILL_NAME",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "What bill do you want to pay, again?"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-TransferIntent.IntentSlot-PAYEE_NAME",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "what is the payee name"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-TransferIntent.IntentSlot-PAYEE_AMOUNT",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "how much do you want to transfer"
         }
       ]
     }
@@ -361,6 +509,52 @@
           {
             "name": "PAYEE_NAME",
             "type": "LIST_OF_PAYEE_NAME",
+            "elicitationRequired": true,
+            "confirmationRequired": false,
+            "prompts": {
+              "elicit": "Elicit.Intent-AddPayeeIntent.IntentSlot-PAYEE_NAME"
+            }
+          },
+          {
+            "name": "PAYEE_VPA",
+            "type": "LIST_OF_VPA",
+            "elicitationRequired": true,
+            "confirmationRequired": false,
+            "prompts": {
+              "elicit": "Elicit.Intent-AddPayeeIntent.IntentSlot-PAYEE_VPA"
+            }
+          }
+        ]
+      },
+      {
+        "name": "AuthA",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "AUTH_A_ONE",
+            "type": "AMAZON.Actor",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "AUTH_A_TWO",
+            "type": "AMAZON.Sport",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "AUTH_A_THREE",
+            "type": "AMAZON.Animal",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "AUTH_A_FOUR",
+            "type": "AMAZON.Color",
             "elicitationRequired": false,
             "confirmationRequired": false,
             "prompts": {}
@@ -368,10 +562,18 @@
         ]
       },
       {
-        "name": "AutoStartIntent",
+        "name": "AuthQ",
         "confirmationRequired": false,
         "prompts": {},
-        "slots": []
+        "slots": [
+          {
+            "name": "AUTH_Q",
+            "type": "AUTH_TRIGGER",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
       },
       {
         "name": "BalanceIntent",
@@ -387,37 +589,20 @@
           {
             "name": "BILL_NAME",
             "type": "LIST_OF_BILL_NAME",
-            "elicitationRequired": false,
+            "elicitationRequired": true,
             "confirmationRequired": false,
-            "prompts": {}
+            "prompts": {
+              "elicit": "Elicit.Intent-CheckBillIntent.IntentSlot-BILL_NAME"
+            }
           },
           {
             "name": "BILL_DATE",
-            "type": "AMAZON.DATE",
-            "elicitationRequired": false,
+            "type": "AMAZON.Month",
+            "elicitationRequired": true,
             "confirmationRequired": false,
-            "prompts": {}
-          }
-        ]
-      },
-      {
-        "name": "DurationIntent",
-        "confirmationRequired": false,
-        "prompts": {},
-        "slots": [
-          {
-            "name": "FROM_DAY",
-            "type": "AMAZON.DATE",
-            "elicitationRequired": false,
-            "confirmationRequired": false,
-            "prompts": {}
-          },
-          {
-            "name": "TO_DAY",
-            "type": "AMAZON.DATE",
-            "elicitationRequired": false,
-            "confirmationRequired": false,
-            "prompts": {}
+            "prompts": {
+              "elicit": "Elicit.Intent-CheckBillIntent.IntentSlot-BILL_DATE"
+            }
           }
         ]
       },
@@ -445,9 +630,11 @@
           {
             "name": "BILL_NAME",
             "type": "LIST_OF_BILL_NAME",
-            "elicitationRequired": false,
+            "elicitationRequired": true,
             "confirmationRequired": false,
-            "prompts": {}
+            "prompts": {
+              "elicit": "Elicit.Intent-PayBillIntent.IntentSlot-BILL_NAME"
+            }
           }
         ]
       },
@@ -492,44 +679,20 @@
           {
             "name": "PAYEE_NAME",
             "type": "LIST_OF_PAYEE_NAME",
-            "elicitationRequired": false,
+            "elicitationRequired": true,
             "confirmationRequired": false,
-            "prompts": {}
+            "prompts": {
+              "elicit": "Elicit.Intent-TransferIntent.IntentSlot-PAYEE_NAME"
+            }
           },
           {
             "name": "PAYEE_AMOUNT",
             "type": "AMAZON.NUMBER",
-            "elicitationRequired": false,
+            "elicitationRequired": true,
             "confirmationRequired": false,
-            "prompts": {}
-          }
-        ]
-      },
-      {
-        "name": "VerifyAuthQOne",
-        "confirmationRequired": false,
-        "prompts": {},
-        "slots": [
-          {
-            "name": "ANSWER_Q_ONE",
-            "type": "AMAZON.Actor",
-            "elicitationRequired": false,
-            "confirmationRequired": false,
-            "prompts": {}
-          }
-        ]
-      },
-      {
-        "name": "VerifyAuthQThree",
-        "confirmationRequired": false,
-        "prompts": {},
-        "slots": [
-          {
-            "name": "ANSWER_Q_THREE",
-            "type": "AMAZON.NUMBER",
-            "elicitationRequired": false,
-            "confirmationRequired": false,
-            "prompts": {}
+            "prompts": {
+              "elicit": "Elicit.Intent-TransferIntent.IntentSlot-PAYEE_AMOUNT"
+            }
           }
         ]
       }

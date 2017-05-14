@@ -141,3 +141,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 venv*
+
+alexa_custom_skill/flask-ask/
+audio/
+images/
+video/
