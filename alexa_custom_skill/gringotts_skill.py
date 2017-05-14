@@ -24,6 +24,7 @@ consumer_key = '9avqAwEDHj08BTSWo4rbklFSH9kBkDGYJVIcLuok'
 consumer_secret = 'nn93bOnzbVnTHodCep94BOOEEe4CO6vdkJKPbAZp'
 user_topic = "/text/" + customer_id + "/messages/user"
 alexa_topic = "/text/" + customer_id + "/messages/alexa"
+result_topic = "/text/" + customer_id + "/messages/result"
 splitwise_server = 'https://776c2c44.ngrok.io/splitwise'
 
 questions = [["Who's your favourite actor?","Angelina Jolie"],
@@ -73,10 +74,6 @@ class Payload:
         self.text = text
     def setAlexaData(self,alexaData):
         self.alexaData = alexaData
-
-client = paho.Client(client_id="voicepay_skill")
-client.on_publish = on_publish
-client.on_connect = on_connect
 
 
 @ask.launch
@@ -243,6 +240,9 @@ def AnswerOne(answer1,answer2,answer3,answer4):
     mqttPayload.setIntent('AuthA')
     if (answer == session.attributes['current_answer']):
         print "Correct Answer"
+        mqttPayloadResult = Payload(customer_id)
+        mqttPayloadResult.setIntent(session.attributes['funct'])
+
         res = authFunct(session.attributes['funct'],session.attributes['args'], session.attributes['name'],session.attributes['amount'])
         session.attributes['authorized'] = 1
 
@@ -251,27 +251,36 @@ def AnswerOne(answer1,answer2,answer3,answer4):
             print response[1][1]
             text2 = render_template('balance_response', balance=response[1][1]['balance'])
             speech_text = render_template('auth_verified') + ' And ' + res + ' ' + text2
+            if (session.attributes['funct'] == "transfer"):
+                mqttPayloadResult.setAlexaData({'balance':response[1][1]['balance'],'name':session.attributes['name'],'amount':session.attributes['amount']});
+            elif (session.attributes['funct'] == "paybill"):
+                mqttPayloadResult.setAlexaData({'balance':response[1][1]['balance'],'name':session.attributes['name'],'amount':rest.checkBill(session.attributes['name'])});
         else:
             speech_text = render_template('auth_verified') + ' And ' + res
     else :
         speech_text = render_template('auth_error')
     mqttPayload.setText(speech_text)
     client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
+    if (session.attributes['funct'] == "transfer" or session.attributes['funct'] == "paybill"):
+        client.publish(result_topic, json.dumps(mqttPayloadResult.__dict__), qos=0)
     return statement(speech_text).simple_card('GringottsResponse', speech_text)
 
 @ask.intent('TransferIntent', mapping={'payeeName':'PAYEE_NAME', 'payeeAmount' : 'PAYEE_AMOUNT'})
 def transferMoney(payeeName, payeeAmount):
     if payeeName is not None and payeeAmount is not None:
+        payeeName = payeeName.lower();
         mqttPayload = Payload(customer_id)
         mqttPayload.setIntent('TransferIntent')
         mqttPayload.setSlots({'payeeName' : payeeName, 'payeeAmount' : payeeAmount})
         client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
         print "payeeName - %s payeeAmount - %s" % (payeeName, payeeAmount)
-        session.attributes['args'] = [token, customer_id, "soumyadeep@icicibank", vpa_details.get(payeeName.lower()), payeeAmount, "remarks"]
+        session.attributes['args'] = [token, customer_id, "soumyadeep@icicibank", vpa_details.get(payeeName), payeeAmount, "remarks"]
         session.attributes['funct'] = 'transfer'
         session.attributes['name'] = payeeName
         session.attributes['amount'] = payeeAmount
         speech_text = render_template('do_auth')
+        mqttPayload.setText(speech_text)
+        client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
         return question(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         return dialog().dialog_directive()
@@ -289,6 +298,8 @@ def payBill(billName):
         session.attributes['name'] = billName
         session.attributes['amount'] = 0
         speech_text = render_template('do_auth')
+        mqttPayload.setText(speech_text)
+        client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
         return question(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         return dialog().dialog_directive()
@@ -506,10 +517,16 @@ if __name__ == '__main__':
     #print rest.getAccountSummary(token, 33336369, account_no)
     #print rest.listPayee(token, 33336369)
     #print rest.createVPA(token, account_no, "soumyadeep@icicibank")
-    #client.disconnect()
-    client.connect(broker, 1883)
-    client.loop_start()
-    print user_topic
-    print alexa_topic
+    try:
+        client = paho.Client(clean_session=True)
+        client.on_publish = on_publish
+        client.on_connect = on_connect
+        client.connect(broker, 1883, 60)
+        client.loop_start()
+        print user_topic
+        print alexa_topic
+    except (KeyboardInterrupt, SystemExit):
+        client.loop_stop()
+        client.disconnect()
 
-    app.run(threaded=True,debug=True)
+    app.run(debug=True)
