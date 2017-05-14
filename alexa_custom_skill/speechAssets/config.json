@@ -195,7 +195,7 @@
           "samples": [
             "{RECENT_DURATION} ",
             "duration is {RECENT_DURATION} ",
-            "{RECENT_DURATION} days"
+            "last {RECENT_DURATION} "
           ]
         }
       ]
@@ -246,7 +246,8 @@
         "what is my split wise balance",
         "check my split wise",
         "how much do i owe on split wise",
-        "how much money do i owe"
+        "how much money do i owe",
+        "how much i owe on split wise"
       ],
       "slots": []
     },

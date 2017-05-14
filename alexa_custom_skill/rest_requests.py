@@ -153,37 +153,6 @@ def getMaxFriendOwed(access_token):
     return status_code, payload
 
 
-def authFunct(funct, args, name, amount_passed):
-    if funct=='transfer':
-        response = upiFundTransferVtoV(*args)
-        if (response[0] == 200):
-            print response[1]
-            try:
-                if (response[1][1]["status"] == "SUCCESS"):
-                    speech_text = render_template('transfer_response', payeeName=name, payeeAmount=amount_passed)
-                else:
-                    speech_text = render_template('transfer_error')
-            except (KeyError, IndexError):
-                speech_text = render_template('transfer_error')
-        else:
-            speech_text = render_template('icici_error')
-        return speech_text
-
-
-    elif funct=='paybill':
-        response = payBill(*args)
-        if (response[0] == 200):
-            amount = checkBill(name)
-            print "billName " + name
-            speech_text = render_template('pay_bill_response', billName=name, billAmount=amount)
-
-        else:
-            speech_text = render_template('icici_error')
-        return speech_text
-
-    elif funct=='blockCard':
-        return(render_template('customer_care_block_card'))
-
 billTypes = {
     "electricity" : {
         "billerdetail" : "Electricity Board",

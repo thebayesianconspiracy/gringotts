@@ -243,7 +243,7 @@ def AnswerOne(answer1,answer2,answer3,answer4):
     mqttPayload.setIntent('AuthA')
     if (answer == session.attributes['current_answer']):
         print "Correct Answer"
-        res = rest.authFunct(session.attributes['funct'],session.attributes['args'], session.attributes['name'],session.attributes['amount'])
+        res = authFunct(session.attributes['funct'],session.attributes['args'], session.attributes['name'],session.attributes['amount'])
         session.attributes['authorized'] = 1
 
         response = rest.getAccountBalance(token, account_no)
@@ -348,9 +348,13 @@ def checkBilly(billName, billDate):
 
 @ask.intent('CustomerCareIntent')
 def initiateCustomerCare():
+    mqttPayload = Payload(customer_id)
+    mqttPayload.setIntent('CustomerCareIntent')
+    client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
     speech_text = render_template('customer_care_init')
+    mqttPayload.setText(speech_text)
+    client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
     return question(speech_text).simple_card('GringottsResponse', speech_text)
-
 
 
 @ask.intent('CardBlockIntent')
@@ -359,13 +363,13 @@ def blockCard():
     session.attributes['funct'] = 'blockCard'
     session.attributes['name'] = ''
     session.attributes['amount'] = 0
+    mqttPayload = Payload(customer_id)
+    mqttPayload.setIntent('CardBlockIntent')
+    client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
     speech_text = render_template('do_auth')
+    mqttPayload.setText(speech_text)
+    client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
     return question(speech_text).simple_card('GringottsResponse', speech_text)
-
-
-
-
-
 
 @ask.intent('CCOptionIntent',mapping={'answer1':'OPTION_ONE','answer2':'OPTION_TWO','answer3':'OPTION_THREE','answer4':'OPTION_FOUR','answer5':'OPTION_FIVE' })
 def AnswerOne(answer1,answer2,answer3,answer4,answer5):
@@ -385,9 +389,46 @@ def AnswerOne(answer1,answer2,answer3,answer4,answer5):
         answer = 'card'
 
     print answer
+    mqttPayload = Payload(customer_id)
+    mqttPayload.setIntent('CCOptionIntent')
+    mqttPayload.setSlots({'answer' : answer})
+    client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
     speech_text = render_template('cc_'+answer)
+    mqttPayload.setText(speech_text)
+    client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
     return question(speech_text).simple_card('GringottsResponse', speech_text)
 
+
+def authFunct(funct, args, name, amount_passed):
+    if funct=='transfer':
+        response = rest.upiFundTransferVtoV(*args)
+        if (response[0] == 200):
+            print response[1]
+            try:
+                if (response[1][1]["status"] == "SUCCESS"):
+                    speech_text = render_template('transfer_response', payeeName=name, payeeAmount=amount_passed)
+                else:
+                    speech_text = render_template('transfer_error')
+            except (KeyError, IndexError):
+                speech_text = render_template('transfer_error')
+        else:
+            speech_text = render_template('icici_error')
+        return speech_text
+
+
+    elif funct=='paybill':
+        response = rest.payBill(*args)
+        if (response[0] == 200):
+            amount = rest.checkBill(name)
+            print "billName " + name
+            speech_text = render_template('pay_bill_response', billName=name, billAmount=amount)
+
+        else:
+            speech_text = render_template('icici_error')
+        return speech_text
+
+    elif funct=='blockCard':
+        return(render_template('customer_care_block_card'))
 
 @ask.session_ended
 def session_ended():
