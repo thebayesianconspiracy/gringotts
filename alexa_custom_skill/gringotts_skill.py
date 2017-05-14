@@ -281,7 +281,7 @@ def transferMoney(payeeName, payeeAmount):
 def payBill(billName):
     if billName is not None:
         mqttPayload = Payload(customer_id)
-        mqttPayload.setIntent('TransferIntent')
+        mqttPayload.setIntent('PayBillIntent')
         mqttPayload.setSlots({'billName' : billName})
         client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
         session.attributes['args'] = [billName]
@@ -300,6 +300,10 @@ def addPayee(payeeName, payeeVPA):
     if payeeName is not None and payeeVPA is not None:
         payeeName = payeeName.lower();
         payeeVPA = payeeVPA.lower();
+        mqttPayload = Payload(customer_id)
+        mqttPayload.setIntent('AddPayeeIntent')
+        mqttPayload.setSlots({'payeeName' : payeeName, 'payeeVPA' : payeeVPA})
+        client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
         print "payee name %s payeeVPA %s" % (payeeName, payeeVPA)
         if payee_details.get(payeeName):
             response = rest.createVPA(token, payee_details.get(payeeName), payeeVPA.replace(" at ", "@"))
@@ -314,6 +318,9 @@ def addPayee(payeeName, payeeVPA):
                     speech_text = render_template('add_payee_api_error')
         else:
             speech_text = render_template('add_payee_name_error')
+        mqttPayload.setText(speech_text)
+        mqttPayload.setAlexaData({'payeeName':payeeName, 'payeeVPA':payeeVPA})
+        client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         return dialog().dialog_directive()
@@ -379,7 +386,7 @@ def AnswerOne(answer1,answer2,answer3,answer4,answer5):
 
     print answer
     speech_text = render_template('cc_'+answer)
-    return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    return question(speech_text).simple_card('GringottsResponse', speech_text)
 
 
 @ask.session_ended
