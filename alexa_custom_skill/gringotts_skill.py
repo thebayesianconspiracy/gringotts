@@ -15,7 +15,8 @@ import paho.mqtt.client as paho
 
 external_tokens={}
 
-broker = 'broker.hivemq.com'
+#broker = 'broker.hivemq.com'
+broker = '127.0.0.1'
 token = "e2e960794d44"
 account_no = "4444777755551369"
 customer_id = "33336369"
@@ -49,7 +50,6 @@ def on_connect(client, userdata, rc):
     print("Connected with result code "+str(rc))
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("$SYS/#")
 
 
 def on_publish(client, userdata, mid):
@@ -173,12 +173,14 @@ def splitwiseMaxOwe():
 
 @ask.intent('MoneySpentIntent',
             mapping={'recent_duration' : 'RECENT_DURATION'})
-
-
 #Done
 def getMoneySpent(recent_duration):
     if recent_duration is not None:
         duration = re.search('\d+', recent_duration).group(0)
+        mqttPayload = Payload(customer_id)
+        mqttPayload.setIntent('MoneySpentIntent')
+        mqttPayload.setSlots({'days' : duration})
+        client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
         response = rest.getnDaysTransaction(token, account_no, duration)
         print "getting data for days " + duration
         if (response[0] == 200):
@@ -192,8 +194,11 @@ def getMoneySpent(recent_duration):
                     if(key['credit_debit_flag'] == "Dr."):
                         amount = amount + float(key['transaction_amount'])
             speech_text = render_template('money_spent_response', amount=str(amount), duration=duration)
+            mqttPayload.setAlexaData({'amount' : amount})
         else:
             speech_text = render_template('icici_error')
+        mqttPayload.setText(speech_text)
+        client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         return dialog().dialog_directive()
@@ -205,7 +210,9 @@ def getMoneySpent(recent_duration):
 def CheckAuth():
     qa = random.choice(questions)
     print "question : " + qa[0]
-
+    mqttPayload = Payload(customer_id)
+    mqttPayload.setIntent('AuthQ')
+    client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
     session.attributes['authorized'] = 0
     speech_text = render_template('ask_q', q = qa[0])
     session.attributes['current_question'] = qa[0]
@@ -229,6 +236,8 @@ def AnswerOne(answer1,answer2,answer3,answer4):
         answer = answer1
 
     print answer
+    mqttPayload = Payload(customer_id)
+    mqttPayload.setIntent('AuthA')
     if (answer == session.attributes['current_answer']):
         print "Correct Answer"
         res = rest.authFunct(session.attributes['funct'],session.attributes['args'], session.attributes['name'],session.attributes['amount'])
@@ -241,14 +250,19 @@ def AnswerOne(answer1,answer2,answer3,answer4):
             speech_text = render_template('auth_verified') + ' And ' + res + ' ' + text2
         else:
             speech_text = render_template('auth_verified') + ' And ' + res
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         speech_text = render_template('auth_error')
-        return statement(speech_text).simple_card('GringottsResponse', speech_text)
+    mqttPayload.setText(speech_text)
+    client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
+    return statement(speech_text).simple_card('GringottsResponse', speech_text)
 
 @ask.intent('TransferIntent', mapping={'payeeName':'PAYEE_NAME', 'payeeAmount' : 'PAYEE_AMOUNT'})
 def transferMoney(payeeName, payeeAmount):
     if payeeName is not None and payeeAmount is not None:
+        mqttPayload = Payload(customer_id)
+        mqttPayload.setIntent('TransferIntent')
+        mqttPayload.setSlots({'payeeName' : payeeName, 'payeeAmount' : payeeAmount})
+        client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
         print "payeeName - %s payeeAmount - %s" % (payeeName, payeeAmount)
         session.attributes['args'] = [token, customer_id, "soumyadeep@icicibank", vpa_details.get(payeeName.lower()), payeeAmount, "remarks"]
         session.attributes['funct'] = 'transfer'
@@ -272,30 +286,6 @@ def payBill(billName):
     else :
         return dialog().dialog_directive()
 
-
-
-
-
-'''
-#Done
-@ask.intent('TransferIntent', mapping={'payeeName':'PAYEE_NAME', 'payeeAmount' : 'PAYEE_AMOUNT'})
-def transferMoney(recentDays, payeeName, payeeAmount):
-    if payeeName is not None and payeeAmount is not None:
-            print "payeeName - %s payeeAmount - %s" % (payeeName, payeeAmount)
-            response = rest.upiFundTransferVtoV(token, customer_id, "soumyadeep@icicibank", vpa_details.get(payeeName.lower()), payeeAmount, "remarks")
-            if (response[0] == 200):
-                print response[1]
-                try:
-                    if (response[1][1]["status"] == "SUCCESS"):
-                        speech_text = render_template('transfer_response', payeeName=payeeName, payeeAmount=payeeAmount)
-                    else:
-                        speech_text = render_template('transfer_error')
-                except (KeyError, IndexError):
-                    speech_text = render_template('transfer_error')
-            return statement(speech_text).simple_card('GringottsResponse', speech_text)
-    else :
-        return dialog().dialog_directive()
-'''
 #Done
 @ask.intent('AddPayeeIntent',
             mapping={'payeeName': 'PAYEE_NAME', 'payeeVPA' : 'PAYEE_VPA'})
@@ -321,32 +311,22 @@ def addPayee(payeeName, payeeVPA):
     else :
         return dialog().dialog_directive()
 
-'''
-#Done
-@ask.intent('PayBillIntent',
-            mapping={'billName': 'BILL_NAME'})
-def payBill(billName):
-    if billName is not None:
-        response = rest.payBill(billName)
-        if (response[0] == 200):
-            amount = rest.checkBill(billName)
-            print "billName " + billName
-            speech_text = render_template('pay_bill_response', billName=billName, billAmount=amount)
-            return question(speech_text).simple_card('GringottsResponse', speech_text)
-        else:
-            speech_text = render_template('icici_error')
-            return statement(speech_text).simple_card('GringottsResponse', speech_text)
-    else :
-        speech_text = render_template('pay_bill_name_error')
-        return question(speech_text).simple_card('GringottsResponse', speech_text)
-'''
 #Done
 @ask.intent('CheckBillIntent',
             mapping={'billName': 'BILL_NAME', 'billDate': 'BILL_DATE'})
 def checkBilly(billName, billDate):
-    amount = rest.checkBill(billName)
-    if billName is not None:
+    if billName is not None and billDate is not None:
+        mqttPayload = Payload(customer_id)
+        mqttPayload.setIntent('CheckBillIntent')
+        mqttPayload.setSlots({'billName' : billName, 'billDate' : billDate})
+        client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
+
+        amount = rest.checkBill(billName)
         speech_text = render_template('check_bill_response', billName=billName, billAmount=amount, billDate=billDate)
+
+        mqttPayload.setText(speech_text)
+        mqttPayload.setAlexaData({'billName' : billName, 'billAmount' : amount, 'billDate' : billDate})
+        client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
         return statement(speech_text).simple_card('GringottsResponse', speech_text)
     else :
         return dialog().dialog_directive()
@@ -393,11 +373,6 @@ def AnswerOne(answer1,answer2,answer3,answer4,answer5):
     print answer
     speech_text = render_template('cc_'+answer)
     return statement(speech_text).simple_card('GringottsResponse', speech_text)
-
-
-
-
-
 
 
 @ask.session_ended
@@ -476,6 +451,7 @@ if __name__ == '__main__':
     #print rest.getAccountSummary(token, 33336369, account_no)
     #print rest.listPayee(token, 33336369)
     #print rest.createVPA(token, account_no, "soumyadeep@icicibank")
+    #client.disconnect()
     client.connect(broker, 1883)
     client.loop_start()
     print user_topic
