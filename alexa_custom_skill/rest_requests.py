@@ -176,10 +176,13 @@ def authFunct(funct, args, name, amount_passed):
             amount = checkBill(name)
             print "billName " + name
             speech_text = render_template('pay_bill_response', billName=name, billAmount=amount)
-            
+
         else:
             speech_text = render_template('icici_error')
         return speech_text
+
+    elif funct=='blockCard':
+        return(render_template('customer_care_block_card'))
 
 billTypes = {
     "electricity" : {
@@ -289,10 +292,8 @@ def testOne():
     #status, json = payBill(token, custid, nickname, amount)
     #status, json = addBiller(token, billerdetail, state, custid, nickname, consumerno)
     status, json = payBill(token,custid, nickname, amount)
-    
+
 
     print status, json
-    
+
 #testOne()
-
-

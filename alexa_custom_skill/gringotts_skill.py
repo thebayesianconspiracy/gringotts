@@ -351,6 +351,55 @@ def checkBilly(billName, billDate):
     else :
         return dialog().dialog_directive()
 
+
+@ask.intent('CustomerCareIntent')
+def initiateCustomerCare():
+    speech_text = render_template('customer_care_init')
+    return question(speech_text).simple_card('GringottsResponse', speech_text)
+
+
+
+@ask.intent('CardBlockIntent')
+def blockCard():
+    session.attributes['args'] = []
+    session.attributes['funct'] = 'blockCard'
+    session.attributes['name'] = ''
+    session.attributes['amount'] = 0
+    speech_text = render_template('do_auth')
+    return question(speech_text).simple_card('GringottsResponse', speech_text)
+
+
+
+
+
+
+@ask.intent('CCOptionIntent',mapping={'answer1':'OPTION_ONE','answer2':'OPTION_TWO','answer3':'OPTION_THREE','answer4':'OPTION_FOUR','answer5':'OPTION_FIVE' })
+def AnswerOne(answer1,answer2,answer3,answer4,answer5):
+    print answer1,answer2,answer3,answer4,answer5
+    if(answer1 is None):
+        if(answer2 is None):
+            if(answer3 is None):
+                if(answer4 in None):
+                    answer = 'none'
+                else:
+                    answer = 'investments'
+            else:
+                answer = 'loans'
+        else:
+            answer = 'net_banking'
+    else:
+        answer = 'card'
+
+    print answer
+    speech_text = render_template('cc_'+answer)
+    return statement(speech_text).simple_card('GringottsResponse', speech_text)
+
+
+
+
+
+
+
 @ask.session_ended
 def session_ended():
     return "", 200
@@ -428,6 +477,7 @@ if __name__ == '__main__':
     #print rest.listPayee(token, 33336369)
     #print rest.createVPA(token, account_no, "soumyadeep@icicibank")
     client.connect(broker, 1883)
+    client.loop_start()
     print user_topic
     print alexa_topic
 
