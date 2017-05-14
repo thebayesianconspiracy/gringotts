@@ -24,6 +24,7 @@ consumer_key = '9avqAwEDHj08BTSWo4rbklFSH9kBkDGYJVIcLuok'
 consumer_secret = 'nn93bOnzbVnTHodCep94BOOEEe4CO6vdkJKPbAZp'
 user_topic = "/text/" + customer_id + "/messages/user"
 alexa_topic = "/text/" + customer_id + "/messages/alexa"
+splitwise_server = 'https://776c2c44.ngrok.io/splitwise'
 
 questions = [["Who's your favourite actor?","Angelina Jolie"],
              ["What's your favourite sport?", 'basketball'],
@@ -136,8 +137,9 @@ def splitwiseBalance():
         return statement(speech_text)
     else:
         speech_text = render_template('splitwise_login_response')
-        url = "http://" + socket.gethostbyname(socket.gethostname()) + ":5000/splitwise"
-        mqttPayload.setText(speech_text)
+        #url = "http://" + socket.gethostbyname(socket.gethostname()) + ":5000/splitwise"
+        url = splitwise_server
+        mqttPayload.setText(speech_text + " " + url)
         mqttPayload.setAlexaData({'login_url' : url})
         client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
         return statement(speech_text).standard_card(title="splitwise login", text=speech_text + " " + url)
@@ -164,8 +166,9 @@ def splitwiseMaxOwe():
         return statement(speech_text)
     else:
         speech_text = render_template('splitwise_login_response')
-        url = "http://" + socket.gethostbyname(socket.gethostname()) + ":5000/splitwise"
-        mqttPayload.setText(speech_text)
+        #url = "http://" + socket.gethostbyname(socket.gethostname()) + ":5000/splitwise"
+        url = splitwise_server
+        mqttPayload.setText(speech_text + " " + url)
         mqttPayload.setAlexaData({'login_url' : url})
         client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
         return statement(speech_text).standard_card(title="splitwise login", text=speech_text + " " + url)
@@ -277,6 +280,10 @@ def transferMoney(payeeName, payeeAmount):
             mapping={'billName': 'BILL_NAME'})
 def payBill(billName):
     if billName is not None:
+        mqttPayload = Payload(customer_id)
+        mqttPayload.setIntent('TransferIntent')
+        mqttPayload.setSlots({'billName' : billName})
+        client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
         session.attributes['args'] = [billName]
         session.attributes['funct'] = 'paybill'
         session.attributes['name'] = billName
