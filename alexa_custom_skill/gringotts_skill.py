@@ -77,7 +77,6 @@ client = paho.Client(client_id="voicepay_skill")
 client.on_publish = on_publish
 client.on_connect = on_connect
 
-mqttPayload = Payload(customer_id)
 
 @ask.launch
 def launch():
@@ -87,6 +86,7 @@ def launch():
 #Done
 @ask.intent('BalanceIntent')
 def getAccountBalance():
+    mqttPayload = Payload(customer_id)
     mqttPayload.setIntent('BalanceIntent')
     client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
     response = rest.getAccountBalance(token, account_no)
@@ -96,7 +96,7 @@ def getAccountBalance():
         mqttPayload.setAlexaData({'balance' : response[1][1]['balance']})
     else:
         speech_text = render_template('icici_error')
-    mqttPayload.setIntent('BalanceIntent')
+    mqttPayload.setText(speech_text)
     client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
     return statement(speech_text).simple_card('GringottsResponse', speech_text)
 
@@ -119,38 +119,55 @@ def getRecentTransactions(fromDay, toDay):
 #Done
 @ask.intent('SplitwiseBalanceIntent')
 def splitwiseBalance():
+    mqttPayload = Payload(customer_id)
+    mqttPayload.setIntent('SplitwiseBalanceIntent')
+    client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
     if 'splitwise' in external_tokens:
         print external_tokens['splitwise'], 'yoyoyoyoyoyoy'
         response = rest.getSplitWiseBalance(external_tokens['splitwise'])
         print response
         if response[0]==200:
             speech_text = render_template('splitwise_balance_response', owe=(response[1]['oweShare']*(-1)), owed=response[1]['owedShare'])
-            return statement(speech_text)
         else:
             speech_text = render_template('splitwise_balance_error')
-            return statement(speech_text)
+        mqttPayload.setText(speech_text)
+        mqttPayload.setAlexaData({'oweShare' : (response[1]['oweShare']*(-1)), 'owedShare': response[1]['owedShare']})
+        client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
+        return statement(speech_text)
     else:
         speech_text = render_template('splitwise_login_response')
         url = "http://" + socket.gethostbyname(socket.gethostname()) + ":5000/splitwise"
+        mqttPayload.setText(speech_text)
+        mqttPayload.setAlexaData({'login_url' : url})
+        client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
         return statement(speech_text).standard_card(title="splitwise login", text=speech_text + " " + url)
 
 
 #Later
 @ask.intent('SplitwiseMaxOweIntent')
 def splitwiseMaxOwe():
+    mqttPayload = Payload(customer_id)
+    mqttPayload.setIntent('SplitwiseMaxOweIntent')
+    client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
+    response = rest.getAccountBalance(token, account_no)
     if 'splitwise' in external_tokens:
         print external_tokens['splitwise']
         response = rest.getMaxFriendOwed(external_tokens['splitwise'])
         print response
         if response[0]==200:
             speech_text = render_template('splitwise_max_owe_response', owe=(response[1]['amount']*(-1)), friend=response[1]['friend'])
-            return statement(speech_text)
         else:
             speech_text = render_template('splitwise_balance_error')
-            return statement(speech_text)
+        mqttPayload.setText(speech_text)
+        mqttPayload.setAlexaData({'owe' : (response[1]['amount']*(-1)), 'friend' : response[1]['friend']})
+        client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
+        return statement(speech_text)
     else:
         speech_text = render_template('splitwise_login_response')
         url = "http://" + socket.gethostbyname(socket.gethostname()) + ":5000/splitwise"
+        mqttPayload.setText(speech_text)
+        mqttPayload.setAlexaData({'login_url' : url})
+        client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
         return statement(speech_text).standard_card(title="splitwise login", text=speech_text + " " + url)
 
 
