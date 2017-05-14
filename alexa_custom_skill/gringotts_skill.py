@@ -10,24 +10,25 @@ import rest_requests as rest
 from splitwise import Splitwise
 import datetime
 import copy, random
-app = Flask(__name__)
-ask = Ask(app, "/")
-app.secret_key = "test_secret_key"
-logging.getLogger('flask_ask').setLevel(logging.DEBUG)
+import paho.mqtt.client as paho
+
 
 external_tokens={}
 
-
+broker = 'broker.hivemq.com'
 token = "e2e960794d44"
 account_no = "4444777755551369"
 customer_id = "33336369"
 consumer_key = '9avqAwEDHj08BTSWo4rbklFSH9kBkDGYJVIcLuok'
 consumer_secret = 'nn93bOnzbVnTHodCep94BOOEEe4CO6vdkJKPbAZp'
+user_topic = "/text/" + customer_id + "/messages/user"
+alexa_topic = "/text/" + customer_id + "/messages/alexa"
 
 questions = [["Who's your favourite actor?","Angelina Jolie"],
              ["What's your favourite sport?", 'basketball'],
              ["What's your favourite animal?","lion"],
              ["What's your favourite color?","black"]]
+
 payee_details = {
                 'sam' : '4444777755551370',
                 'nick' : '4444777755551371',
@@ -38,22 +39,65 @@ vpa_details = {
                 'nick' : 'nick@icicibank',
                 'john' : 'john@icicibank',
                 }
+
+app = Flask(__name__)
+ask = Ask(app, "/")
+app.secret_key = "test_secret_key"
+logging.getLogger('flask_ask').setLevel(logging.DEBUG)
+
+def on_connect(client, userdata, rc):
+    print("Connected with result code "+str(rc))
+    # Subscribing in on_connect() means that if we lose the connection and
+    # reconnect then subscriptions will be renewed.
+    client.subscribe("$SYS/#")
+
+
+def on_publish(client, userdata, mid):
+    print("published : "+str(mid))
+
+
+class Payload:
+    slots = ""
+    intent = ""
+    text = ""
+    customer_id = ""
+    alexaData = ""
+    def __init__(self, customer_id):
+        self.customer_id = customer_id
+    def setSlots(self,slots):
+        self.slots = slots
+    def setIntent(self,intent):
+        self.intent = intent
+    def setText(self,text):
+        self.text = text
+    def setAlexaData(self,alexaData):
+        self.alexaData = alexaData
+
+client = paho.Client(client_id="voicepay_skill")
+client.on_publish = on_publish
+client.on_connect = on_connect
+
+mqttPayload = Payload(customer_id)
+
 @ask.launch
 def launch():
     speech_text = render_template('welcome')
     return question(speech_text).reprompt(speech_text).simple_card('GringottsResponse', speech_text)
 
-
-
 #Done
 @ask.intent('BalanceIntent')
 def getAccountBalance():
+    mqttPayload.setIntent('BalanceIntent')
+    client.publish(user_topic, json.dumps(mqttPayload.__dict__), qos=0)
     response = rest.getAccountBalance(token, account_no)
     if (response[0] == 200):
         print response[1][1]
         speech_text = render_template('balance_response', balance=response[1][1]['balance'])
+        mqttPayload.setAlexaData({'balance' : response[1][1]['balance']})
     else:
         speech_text = render_template('icici_error')
+    mqttPayload.setIntent('BalanceIntent')
+    client.publish(alexa_topic, json.dumps(mqttPayload.__dict__), qos=0)
     return statement(speech_text).simple_card('GringottsResponse', speech_text)
 
 
@@ -172,7 +216,7 @@ def AnswerOne(answer1,answer2,answer3,answer4):
         print "Correct Answer"
         res = rest.authFunct(session.attributes['funct'],session.attributes['args'], session.attributes['name'],session.attributes['amount'])
         session.attributes['authorized'] = 1
-        
+
         response = rest.getAccountBalance(token, account_no)
         if (response[0] == 200):
             print response[1][1]
@@ -350,7 +394,7 @@ def loggedin():
     if 'access_token' not in session_flask:
        return redirect(url_for("home"))
 
-    external_tokens['splitwise'] = session_flask['access_token'] 
+    external_tokens['splitwise'] = session_flask['access_token']
     print rest.getMaxFriendOwed(session_flask['access_token'])
     print rest.getSplitWiseBalance(session_flask['access_token'])
     return render_template("loggedin.html")
@@ -360,8 +404,14 @@ def logout():
     session_flask.pop('access_token', None)
     return redirect(url_for('home'))
 
+
+
 if __name__ == '__main__':
     #print rest.getAccountSummary(token, 33336369, account_no)
     #print rest.listPayee(token, 33336369)
     #print rest.createVPA(token, account_no, "soumyadeep@icicibank")
+    client.connect(broker, 1883)
+    print user_topic
+    print alexa_topic
+
     app.run(threaded=True,debug=True)
