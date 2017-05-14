@@ -44,3 +44,11 @@ icici_error : Sorry, could not connect to ICICI bank API.
 bye: Goodbye.
 help: Hi. I am voice pay. You can ask me about your account balance, your spltiwise balance, transfer funds and do conventional banking the alexa way.
 help_reprompt: To know your account balance, ask what is my accoutn balance.
+
+customer_care_init : Welcome to VoicePay customer care. About which of the following topics may I help you with today? Credit or debit cards, internet banking, loans, investments and deposits. Say none of the these, if your query does not fall under any of these topics.
+cc_none : This feature is going to be included shortly. Now a customer care representative will be callng to answer your query.
+cc_loans : This feature is going to be included shortly. Now a customer care representative will be callng to answer your query.
+cc_investments : This feature is going to be included shortly. Now a customer care representative will be callng to answer your query.
+cc_net_banking : This feature is going to be included shortly. Now a customer care representative will be callng to answer your query.
+cc_card : Do you want to block your card? Or do you want to regenerate pin? Or do you want a new card?
+customer_care_block_card : Your card has been blocked.

@@ -93,6 +93,53 @@
       "slots": []
     },
     {
+      "name": "CardBlockIntent",
+      "samples": [
+        "I want to block my card",
+        "want to block card",
+        "block card",
+        "block my card"
+      ],
+      "slots": []
+    },
+    {
+      "name": "CCOptionIntent",
+      "samples": [
+        "{OPTION_ONE} ",
+        "{OPTION_TWO} ",
+        "{OPTION_THREE} ",
+        "{OPTION_FOUR} ",
+        "{OPTION_FIVE} "
+      ],
+      "slots": [
+        {
+          "name": "OPTION_ONE",
+          "type": "CCOPTION_ONE",
+          "samples": []
+        },
+        {
+          "name": "OPTION_TWO",
+          "type": "CCOPTION_TWO",
+          "samples": []
+        },
+        {
+          "name": "OPTION_THREE",
+          "type": "CCOPTION_THREE",
+          "samples": []
+        },
+        {
+          "name": "OPTION_FOUR",
+          "type": "CCOPTION_FOUR",
+          "samples": []
+        },
+        {
+          "name": "OPTION_FIVE",
+          "type": "CCOPTION_NONE",
+          "samples": []
+        }
+      ]
+    },
+    {
       "name": "CheckBillIntent",
       "samples": [
         "what is my {BILL_NAME} bill for {BILL_DATE}",
@@ -121,6 +168,16 @@
           ]
         }
       ]
+    },
+    {
+      "name": "CustomerCareIntent",
+      "samples": [
+        "connect me to customer care",
+        "customer care",
+        "call customer care",
+        "I need customer care"
+      ],
+      "slots": []
     },
     {
       "name": "MoneySpentIntent",
@@ -186,9 +243,9 @@
     {
       "name": "SplitwiseBalanceIntent",
       "samples": [
-        "what is my splitwise balance",
-        "check my splitwise",
-        "how much do i owe on splitwise",
+        "what is my split wise balance",
+        "check my split wise",
+        "how much do i owe on split wise",
         "how much money do i owe"
       ],
       "slots": []
@@ -238,6 +295,91 @@
         {
           "name": {
             "value": "authorize me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "CCOPTION_FOUR",
+      "values": [
+        {
+          "name": {
+            "value": "investments and deposits"
+          }
+        },
+        {
+          "name": {
+            "value": "investments"
+          }
+        },
+        {
+          "name": {
+            "value": "deposits"
+          }
+        },
+        {
+          "name": {
+            "value": "deposits and investments"
+          }
+        }
+      ]
+    },
+    {
+      "name": "CCOPTION_NONE",
+      "values": [
+        {
+          "name": {
+            "value": "none of these"
+          }
+        }
+      ]
+    },
+    {
+      "name": "CCOPTION_ONE",
+      "values": [
+        {
+          "name": {
+            "value": "credit card"
+          }
+        },
+        {
+          "name": {
+            "value": "debit card"
+          }
+        },
+        {
+          "name": {
+            "value": "debit"
+          }
+        },
+        {
+          "name": {
+            "value": "credit"
+          }
+        }
+      ]
+    },
+    {
+      "name": "CCOPTION_THREE",
+      "values": [
+        {
+          "name": {
+            "value": "loans"
+          }
+        }
+      ]
+    },
+    {
+      "name": "CCOPTION_TWO",
+      "values": [
+        {
+          "name": {
+            "value": "Internet Banking"
+          }
+        },
+        {
+          "name": {
+            "value": "Net Banking"
           }
         }
       ]
@@ -582,6 +724,54 @@
         "slots": []
       },
       {
+        "name": "CardBlockIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": []
+      },
+      {
+        "name": "CCOptionIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "OPTION_ONE",
+            "type": "CCOPTION_ONE",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "OPTION_TWO",
+            "type": "CCOPTION_TWO",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "OPTION_THREE",
+            "type": "CCOPTION_THREE",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "OPTION_FOUR",
+            "type": "CCOPTION_FOUR",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "OPTION_FIVE",
+            "type": "CCOPTION_NONE",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
         "name": "CheckBillIntent",
         "confirmationRequired": false,
         "prompts": {},
@@ -605,6 +795,12 @@
             }
           }
         ]
+      },
+      {
+        "name": "CustomerCareIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": []
       },
       {
         "name": "MoneySpentIntent",
