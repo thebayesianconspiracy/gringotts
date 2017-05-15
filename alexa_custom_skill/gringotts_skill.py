@@ -15,8 +15,8 @@ import paho.mqtt.client as paho
 
 external_tokens={}
 
-#broker = 'broker.hivemq.com'
-broker = '127.0.0.1'
+broker = 'broker.hivemq.com'
+#broker = '127.0.0.1'
 token = "e2e960794d44"
 account_no = "4444777755551369"
 customer_id = "33336369"
@@ -57,6 +57,9 @@ def on_connect(client, userdata, rc):
 def on_publish(client, userdata, mid):
     print("published : "+str(mid))
 
+client = paho.Client(clean_session=True)
+client.on_publish = on_publish
+client.on_connect = on_connect
 
 class Payload:
     slots = ""
@@ -518,9 +521,6 @@ if __name__ == '__main__':
     #print rest.listPayee(token, 33336369)
     #print rest.createVPA(token, account_no, "soumyadeep@icicibank")
     try:
-        client = paho.Client(clean_session=True)
-        client.on_publish = on_publish
-        client.on_connect = on_connect
         client.connect(broker, 1883, 60)
         client.loop_start()
         print user_topic
@@ -529,4 +529,4 @@ if __name__ == '__main__':
         client.loop_stop()
         client.disconnect()
 
-    app.run(debug=True)
+    app.run(threaded=True,debug=True)

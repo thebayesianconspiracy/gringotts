@@ -1,6 +1,6 @@
 {
-    "dev": {
+    "production": {
         "app_function": "gringotts_skill.app", 
-        "s3_bucket": "zappa-lus9pq562"
+        "s3_bucket": "zappa-qfndzr9ei"
     }
 }
