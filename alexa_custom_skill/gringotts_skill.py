@@ -15,7 +15,8 @@ import paho.mqtt.client as paho
 
 external_tokens={}
 
-broker = 'broker.hivemq.com'
+broker = '13.126.2.187'
+#broker = 'broker.hivemq.com'
 #broker = '127.0.0.1'
 token = "e2e960794d44"
 account_no = "4444777755551369"
@@ -25,7 +26,7 @@ consumer_secret = 'nn93bOnzbVnTHodCep94BOOEEe4CO6vdkJKPbAZp'
 user_topic = "/text/" + customer_id + "/messages/user"
 alexa_topic = "/text/" + customer_id + "/messages/alexa"
 result_topic = "/text/" + customer_id + "/messages/result"
-splitwise_server = 'https://776c2c44.ngrok.io/splitwise'
+splitwise_server = 'https://x6jj02vu3l.execute-api.us-east-1.amazonaws.com/production/splitwise'
 
 questions = [["Who's your favourite actor?","Angelina Jolie"],
              ["What's your favourite sport?", 'basketball'],
@@ -514,6 +515,8 @@ def logout():
     session_flask.pop('access_token', None)
     return redirect(url_for('home'))
 
+def mqtt_test():
+    client.publish(user_topic, "test 1 2 3", qos=0)
 
 
 if __name__ == '__main__':
