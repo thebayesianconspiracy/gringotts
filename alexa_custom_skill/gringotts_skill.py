@@ -25,7 +25,7 @@ consumer_secret = 'nn93bOnzbVnTHodCep94BOOEEe4CO6vdkJKPbAZp'
 user_topic = "/text/" + customer_id + "/messages/user"
 alexa_topic = "/text/" + customer_id + "/messages/alexa"
 result_topic = "/text/" + customer_id + "/messages/result"
-splitwise_server = 'https://776c2c44.ngrok.io/splitwise'
+splitwise_server = 'https://b4ade4d1.ngrok.io/splitwise'
 
 questions = [["Who's your favourite actor?","Angelina Jolie"],
              ["What's your favourite sport?", 'basketball'],
