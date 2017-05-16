@@ -15,8 +15,9 @@ import paho.mqtt.client as paho
 
 external_tokens={}
 
-broker = 'broker.hivemq.com'
+#broker = 'broker.hivemq.com'
 #broker = '127.0.0.1'
+broker = '13.126.2.187'
 token = "e2e960794d44"
 account_no = "4444777755551369"
 customer_id = "33336369"
