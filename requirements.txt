@@ -1,0 +1,4 @@
+splitwise
+flask
+paho-mqtt
+
